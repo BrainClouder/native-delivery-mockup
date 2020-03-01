@@ -13,11 +13,16 @@
     "@types/react-dom": "^16.9.5",
     "@types/react-native": "^0.61.17",
     "@types/react-native-snap-carousel": "^3.7.4",
+    "@types/react-redux": "^7.1.7",
+    "@types/redux": "^3.6.0",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "react-native-snap-carousel": "^3.8.4",
     "react-native-web": "^0.12.2",
+    "react-redux": "^7.2.0",
     "react-scripts": "3.4.0",
+    "redux": "^4.0.5",
+    "save": "^2.4.0",
     "typescript": "^3.7.5"
   },
   "scripts": {

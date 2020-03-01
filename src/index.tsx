@@ -1,10 +1,12 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+// import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+// import App from './App';
 //@ts-ignore
-import {AppRegistry} from 'react-native';
-import * as serviceWorker from './serviceWorker';
+import { AppRegistry } from 'react-native';
+// import * as serviceWorker from './serviceWorker';
+import HocApp from './HocApp';
+
 
 // ReactDOM.render(<App />, document.getElementById('root'));
 
@@ -12,8 +14,10 @@ import * as serviceWorker from './serviceWorker';
 // // unregister() to register() below. Note this comes with some pitfalls.
 // // Learn more about service workers: https://bit.ly/CRA-PWA
 // serviceWorker.unregister();
-AppRegistry.registerComponent("App", () => App);
+
+
+AppRegistry.registerComponent("App", () => HocApp);
 
 AppRegistry.runApplication("App", {
-  rootTag: document.getElementById("root")
+    rootTag: document.getElementById("root")
 });
