@@ -10,8 +10,9 @@ const createRestFeed = () => {
         const Rrating: number = Math.random() * 3 + 2;
         const Rimage: string = `https://picsum.photos/${Math.floor(Math.random() * 50 + 300)}`;
         const RdeliveryFee: number = Math.random() > 0.8 ? 0 : Math.floor(Math.random() * 8) + 2;
-        const Rpromo: boolean = Math.random() < 0.1;
-        const RisOpen: boolean = todayHour < 13 && 7 < todayHour ? Math.random() < 0.2 : todayHour >= 13 && 17 > todayHour ? Math.random() < 0.4 : todayHour >= 17 || todayHour < 0 ? Math.random() < 0.8 : Math.random() < 0.02;
+        const Rpromo: boolean = Math.random() < 0.1;        
+        const timeToDeliver = ['20-40', '25-45', '30-60', '40-60', '40-90', '60-90', '60-120'][Math.floor(Math.random() * 7)];
+        const RisOpen: boolean = todayHour < 13 && 7 < todayHour ? Math.random() < 0.2 : todayHour >= 13 && 17 > todayHour ? Math.random() < 0.4 : todayHour >= 17 || todayHour < 0 ? Math.random() < 0.8 : Math.random() < 0.52;
         // const randomTime: number = Math.floor(Math.random() * 5);
         // const timeMinus: number = todayHour - randomTime;
         // const timePlus: number = todayHour + randomTime + 1;
@@ -26,6 +27,7 @@ const createRestFeed = () => {
           deliveryFee: RdeliveryFee,
           promo: Rpromo,
           isOpen: RisOpen,
+          time: timeToDeliver
         })
     }
     return ofTheKing;   
@@ -38,12 +40,17 @@ const feed = createRestFeed();
 const initialState = {
     restFeed: feed,
     selectedRestaurant: -1,
-    windowWidth: window.innerWidth,
+    showMode: false,
 
 }
 
 const main = (state = initialState, action: any) => {
     switch (action.type) {
+        case ACTIONS.toggleShow:
+            return {
+                ...state,
+                showMode: action.payload,
+            }
         case ACTIONS.refreshWidth:
             return {
                 ...state,

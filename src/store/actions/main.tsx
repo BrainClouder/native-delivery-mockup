@@ -1,8 +1,9 @@
 const selectRestaurant: string = 'SELECT-RESTAURANT';
 const refreshWidth: string = 'REFRESH-WIDTH';
+const toggleShow: string = 'TOGGLE-SHOW';
 
 export const ACTIONS = {
-    selectRestaurant, refreshWidth
+    selectRestaurant, refreshWidth, toggleShow
 }
 
 export type TmainState = {
@@ -17,5 +18,6 @@ export type TmainState = {
       }[],
     selectedRestaurant: number,
     windowWidth: number,
+    showMode: boolean,
 
 }

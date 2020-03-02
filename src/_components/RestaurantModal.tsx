@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, Image, TouchableHighlight, Button } from 'react-native';
+import { View, Text, ScrollView, Image, TouchableHighlight, Button, BackHandler } from 'react-native';
 import { connect } from 'react-redux';
 import { TmainState, ACTIONS } from '../store/actions/main';
 
@@ -7,19 +7,31 @@ import ExclamationDark from '../imgs/png/exclamation-dark.png';
 import StarLight from '../imgs/png/star-light.png';
 import HelmetLight from '../imgs/png/helmet-light.png';
 
-interface IRestaurantModal {
-    restInfo: any;
-    WIDTH: number;
-    unselect: () => void;
 
+
+interface IRestaurantModal {
+    restFeed: any;
+    WIDTH: number;
+    selected: any;
+    unselect: () => void;
+    Link: (e: string) => void;
 }
 
-const RestaurantModal: React.FC<IRestaurantModal> = ({ restInfo, unselect, WIDTH }) => {
+const RestaurantModal: React.FC<IRestaurantModal> = ({ restFeed, unselect, WIDTH, Link, selected }) => {
     const [selectedCategory, setCategory] = useState(-1);
-    const [imgSeed] = useState(Math.floor(Math.random() * 20 + 200));
+    const [imgSeed] = useState(`https://picsum.photos/${window.innerWidth}/${Math.floor(Math.random() * 20 + 200)}`);
+
+    useEffect(() => {
+        BackHandler.addEventListener('hardwareBackPress', unselect);
+        return () => {
+            BackHandler.removeEventListener('hardwareBackPress', unselect);
+        }
+    }, [])
+
+
     const [menuel] = useState(() => {
         const menuArray = [];
-        const randomCategoryNumber: number = Math.floor(Math.random() * 3 + 1);
+        const randomCategoryNumber: number = Math.floor(Math.random() * 3 + 3);
         for (let category = 0; category < randomCategoryNumber; category++) {
             const itemArray = [];
             const categoryName = ['tincidunt', 'pozzin', 'aliquet', 'enim', 'nullam', 'nahim', 'eget', 'ligula', 'anc', 'olen', 'vinarg', 'oderd'][Math.floor(Math.random() * 11)];
@@ -34,7 +46,7 @@ const RestaurantModal: React.FC<IRestaurantModal> = ({ restInfo, unselect, WIDTH
                 itemArray.push({
                     name: RitemName,
                     desc: description,
-                    prices: [PriceBase, PriceBase + PriceVariation]
+                    prices: [PriceBase, PriceBase + PriceVariation],
                 });
             }
             menuArray.push({
@@ -44,74 +56,75 @@ const RestaurantModal: React.FC<IRestaurantModal> = ({ restInfo, unselect, WIDTH
         }
         return menuArray;
     })
+    const restInfo = restFeed[selected];
     if (restInfo) {
 
         return (<>
-            <View style={{ position: 'absolute', top: '2vh', alignContent: 'center', flexDirection: 'column', justifyContent: 'center' }}>
+            <View style={{ position: 'absolute', alignContent: 'center', flexDirection: 'column', justifyContent: 'center' }}>
                 <View>
-                    <View>
-                        <Button title="<-" onPress={unselect} ></Button>
-                    </View>
-                    <ScrollView style={{ height: '90vh', backgroundColor: '#ffd' }} >
+                    <ScrollView style={{ height: '100vh', backgroundColor: 'honeydew' }} >
                         <View style={{
                             position: 'relative', width: '100vw',
                             flexDirection: 'column'
                         }}>
-                            <Image source={{ uri: `https://picsum.photos/${window.innerWidth}/${imgSeed}` }}
-                                style={{
-                                    width: window.innerWidth, borderBottomWidth: 4, borderColor: "#000",
-                                    height: 200, opacity: 0.8
-                                }} />
-                            <Image source={{ uri: restInfo.image }} style={{
-                                position: 'absolute', borderRadius: 15,
-                                width:  WIDTH < 700 ? WIDTH * 0.3 : 250, height: WIDTH < 700 ? WIDTH * 0.3 : 250, top: WIDTH < 700 ? 200 - (WIDTH * 0.15) : 75, left: WIDTH * 0.05
-                            }} />
-                            <Text style={{ position: 'absolute', left: WIDTH * 0.05, width: WIDTH < 700 ? WIDTH * 0.3 : 250,  top: 100 + (WIDTH < 700 ? WIDTH * 0.3 : 250) , textAlign: 'center', color: restInfo.isOpen ? 'green' : 'red' }}>
-                                {restInfo.isOpen ? 'Open' : 'Closed'}
-                            </Text>
-                            <View style={{ position: 'absolute', right: 8, top: 200, width: window.innerWidth - 185, flexDirection: 'column' }}>
-                                <View>
-                                    <Text style={{ marginRight: '1em', fontSize: 22, fontWeight: '700', textAlign: 'center' }}>{restInfo.name}</Text>
-                                </View>
-                                <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-                                    <View style={{ flexDirection: 'row', backgroundColor: '#ddb700', paddingHorizontal: '0.3em', margin: 8, paddingVertical: '0.1em', 
-                                    borderRadius: 5 }}>
-                                        <Image source={{ uri: StarLight }} style={{ width: 20, height: 20, padding: '0.1em', margin: '0.1em' }} />
-                                        <Text style={{ fontWeight: '900', padding: '0.1em', color: 'white', margin: '0.1em' }}>{restInfo.rating.toFixed(1)}</Text>
-                                    </View>
-                                    <View style={{
-                                        flexDirection: 'row', backgroundColor: '#22aa22', paddingHorizontal: '0.3em', paddingVertical: '0.1em', borderRadius: 5,
-                                        alignItems: 'center', margin: 8,
-                                    }}>
-                                        <Image source={{ uri: HelmetLight }} style={{ width: 20, height: 20, padding: '0.1em', margin: '0.1em' }} />
-                                        <Text style={{ fontWeight: '900', padding: '0.1em', color: 'white', margin: '0.1em' }}>
-                                            {restInfo.deliveryFee <= 0 ? 'FREE' : `$${restInfo.deliveryFee.toFixed(2)}`}
+                            <View>
+                                <Image source={{ uri: imgSeed }}
+                                    style={{
+                                        width: '100%',
+                                        height: 175
+                                    }} />
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+                                    <View style={{ width: 100, marginTop: -50 }}>
+                                        <Image source={{ uri: restInfo.image }} style={{
+                                            width: 100, height: 100
+                                        }} />
+                                        <Text style={{ textAlign: 'center', color: restInfo.isOpen ? 'green' : 'red' }}>
+                                            {restInfo.isOpen ? 'Open' : 'Closed'}
                                         </Text>
                                     </View>
+                                    <View style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                                        <Text style={{ fontWeight: '700', fontSize: 22, width: '50vw', textAlign: 'center', margin: 6, color: 'darkslategrey' }}>
+                                            {restInfo.name}
+                                        </Text>
+                                        <Text style={{ color: 'goldenrod', fontWeight: '600',  textAlign: 'center', }}>⭐ {restInfo.rating.toFixed(1)}</Text>
+                                    </View>
                                 </View>
-                            </View>                          
-                            <View style={{marginTop:  WIDTH * 0.15, width: WIDTH}}>
-                                <Text style={{textAlign: "center"}}>payment methods</Text>
-                                
                             </View>
-                            <View accessibilityRole="menubar" style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginTop: WIDTH < 700 ? WIDTH * 0.3 : 250 }}>
-                                {menuel.map((e: any, index: number) => <View style={{ flexDirection: 'column', justifyContent: 'center' }}>
-                                    {index !== selectedCategory ? <TouchableHighlight onPress={() => setCategory(index)}>
-                                        <View style={{backgroundColor: '#fff', margin: 8}}>
-                                            <Text style={{fontWeight: '700', fontSize: 16}}>
-                                                {e.category}
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center' }}>
+                                {
+                                    [`${restInfo.deliveryFee === 0 ? 'FREE delivery' : `$${restInfo.deliveryFee} delivery fee`}`,
+                                    `🕑 ${restInfo.time} minutes`, 'payment 💳💸', 'more 📋'].map((e: string) => <TouchableHighlight>
+                                        <View style={{
+                                            paddingHorizontal: 4, paddingVertical: 8,
+                                            alignItems: 'center', flexShrink: 0
+                                        }} ><Text
+                                            style={{
+                                                width: window.innerWidth > 300 ? 70 : 50, fontSize: window.innerWidth > 300 ? 16 : 12,
+                                                textAlign: 'center', color: 'darkslategrey'
+                                            }}>{e}
                                             </Text>
                                         </View>
-                                    </TouchableHighlight> : <Text style={{textAlign: 'center', fontWeight: '700', fontSize: 16}}>{e.category}</Text>}
+                                    </TouchableHighlight>)
+                                }
+                            </View>
+
+                            <View accessibilityRole="menubar" style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                                {menuel.map((e: any, index: number) => <View style={{ flexDirection: 'column', justifyContent: 'center' }}>
+                                    {index !== selectedCategory ? <View style={{ backgroundColor: '#fff', width: "100%", margin: 8 }}>
+                                        <Button title={e.category} color={index%2 === 0 ? "#38757b" : "#81aba8"} onPress={() => setCategory(index)}/>
+                                    </View>
+                                        :
+                                        <Text style={{ textAlign: 'center', fontWeight: '600', fontSize: 18, color: 'mediumpurple' }}>{e.category}</Text>
+                                    }
                                     <View accessibilityRole="menu">
-                                
+
                                         {e.item.map((e: any) => index === selectedCategory ? <View style={{ flexDirection: 'row', margin: '0.4em' }} accessibilityRole="menuitem">
                                             <View style={{ width: '80vw' }}>
-                                                <Text style={{ fontWeight: '700' }}>{e.name}</Text>
-                                                <Text style={{ fontWeight: '500', color: '#444' }}>{e.desc}</Text>
+                                                <Text style={{ fontWeight: '700',  color: 'darkslategrey' }}>{e.name}</Text>
+                                                <Text style={{ fontWeight: '500', color: 'darkslategrey' }}>{e.desc}</Text>
                                             </View>
-                                            <View style={{ width: '10vw' }}>
-                                                <Text>${e.prices[0]}</Text>
+                                            <View style={{ width: '12vw' }}>
+                                                <Text >${e.prices[0]}</Text>
                                             </View>
                                         </View> : '')}
                                     </View>
@@ -120,25 +133,36 @@ const RestaurantModal: React.FC<IRestaurantModal> = ({ restInfo, unselect, WIDTH
                             </View>
 
                         </View>
-                        <View style={{ flexDirection: 'column', alignItems: "center", width: WIDTH * 0.8, marginLeft: WIDTH*0.1 }}>
-                            <Text style={{textAlign: 'center', padding: 4, margin: 4, color: '#666'}}>
+                        <View style={{ flexDirection: 'column', alignItems: "center", margin: 12 }}>
+                            <Text style={{ textAlign: 'center', padding: 4, margin: 8, color: '#666' }}>
                                 Nunc cursus risus dui, sed blandit lectus euismod vitae. Curabitur et est nec quam tincidunt scelerisque. Morbi eu rutrum leo.
                             </Text>
                             <View style={{
-                                flexDirection: 'row', alignItems: 'center', borderColor: '#999', padding: 3,
-                                borderWidth: 2, borderRadius: 10
+                                flexDirection: 'row', alignItems: 'center'
                             }}>
-                                <Image source={{ uri: ExclamationDark }} style={{ width: 40, height: 40, marginHorizontal: 4 }} />
-                                <Text style={{ marginHorizontal: 4 }}>Report a problem</Text>
+                                <Button title="❕ REPORT A PROBLEM" color={'mediumpurple'} onPress={() => console.log('a')}/>                               
                             </View>
                         </View>
                     </ScrollView>
+                    <View style={{ position: 'absolute', top: 0, left: 0, width: '100%' }}>
+                        <TouchableHighlight onPress={() => Link('home')} >
+                            <View style={{
+                                flexDirection: 'row', alignItems: 'center',
+                                height: 32, justifyContent: 'space-around', backgroundColor: '#ffffff77'
+                            }}>
+                                <Text style={{ opacity: 0.6 }}>🔴</Text>
+                                <Text style={{ opacity: 0.6 }}>🔴</Text>
+                            </View>
+                        </TouchableHighlight>
+                    </View>
                 </View>
             </View>
         </>
         )
     } else {
-        return (<></>)
+        return (<>
+            <Text>aaaaaaaaaaa</Text>
+        </>)
     }
 
 }
@@ -146,7 +170,7 @@ const RestaurantModal: React.FC<IRestaurantModal> = ({ restInfo, unselect, WIDTH
 const mapStateToProps = (state: TmainState) => {
     const t = state;
     return {
-        restInfo: t.restFeed[t.selectedRestaurant] !== undefined ? t.restFeed[t.selectedRestaurant] : false,
+        restFeed: t.restFeed,
         WIDTH: t.windowWidth,
     }
 }
