@@ -11,23 +11,20 @@ const HocApp: React.FC = () => {
 	const [routeList] = useState(['home', 'restaurant']);
 	const [param, setParam] = useState(-1);
 
-
 	const changeRoute = (ne: string, param?: any) => {		
 		window.scrollTo(0,0);
 		setRoute(routeList.indexOf(ne));
 		setParam(param);
 	}
 
-
 	const componentList = [<App Link={changeRoute}/>, 
 	<RestaurantModal Link={changeRoute} selected={param}/>]
 
-
-	return (
+	return (<>
 		<Provider store={store}>
 			{componentList[activeRoute] !== undefined ? componentList[activeRoute] : () => setRoute(0)}
-
 		</Provider>
+		</>
 	);
 };
 

@@ -1,33 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Image, TouchableHighlight, Button, BackHandler } from 'react-native';
 import { connect } from 'react-redux';
-import { TmainState, ACTIONS } from '../store/actions/main';
-
-import ExclamationDark from '../imgs/png/exclamation-dark.png';
-import StarLight from '../imgs/png/star-light.png';
-import HelmetLight from '../imgs/png/helmet-light.png';
-
+import { TmainState } from '../store/actions/main';
+import Emoji from './util/Emoji';
 
 
 interface IRestaurantModal {
     restFeed: any;
-    WIDTH: number;
     selected: any;
-    unselect: () => void;
     Link: (e: string) => void;
 }
 
-const RestaurantModal: React.FC<IRestaurantModal> = ({ restFeed, unselect, WIDTH, Link, selected }) => {
+const RestaurantModal: React.FC<IRestaurantModal> = ({ restFeed, Link, selected }) => {
     const [selectedCategory, setCategory] = useState(-1);
     const [imgSeed] = useState(`https://picsum.photos/${window.innerWidth}/${Math.floor(Math.random() * 20 + 200)}`);
 
     useEffect(() => {
-        BackHandler.addEventListener('hardwareBackPress', unselect);
+        BackHandler.addEventListener('hardwareBackPress', () => Link('home'));
         return () => {
-            BackHandler.removeEventListener('hardwareBackPress', unselect);
+            BackHandler.removeEventListener('hardwareBackPress', () => Link('home'));
         }
-    }, [])
-
+    }, []);
 
     const [menuel] = useState(() => {
         const menuArray = [];
@@ -56,6 +49,20 @@ const RestaurantModal: React.FC<IRestaurantModal> = ({ restFeed, unselect, WIDTH
         }
         return menuArray;
     })
+    const [pizzaSelected, setPizza] = useState({
+        status: false,
+        item: {
+            category: -1,
+            index: -1,
+            info: {
+                name: '',
+                desc: '',
+                price: ''
+            }
+        }
+    });
+
+
     const restInfo = restFeed[selected];
     if (restInfo) {
 
@@ -71,12 +78,13 @@ const RestaurantModal: React.FC<IRestaurantModal> = ({ restFeed, unselect, WIDTH
                                 <Image source={{ uri: imgSeed }}
                                     style={{
                                         width: '100%',
-                                        height: 175
+                                        height: 175, borderColor: '#333', borderBottomWidth: 4
                                     }} />
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
                                     <View style={{ width: 100, marginTop: -50 }}>
                                         <Image source={{ uri: restInfo.image }} style={{
-                                            width: 100, height: 100
+                                            width: 100, height: 100, borderRadius: 12,
+                                            borderColor: '#333', borderWidth: 4,
                                         }} />
                                         <Text style={{ textAlign: 'center', color: restInfo.isOpen ? 'green' : 'red' }}>
                                             {restInfo.isOpen ? 'Open' : 'Closed'}
@@ -86,7 +94,7 @@ const RestaurantModal: React.FC<IRestaurantModal> = ({ restFeed, unselect, WIDTH
                                         <Text style={{ fontWeight: '700', fontSize: 22, width: '50vw', textAlign: 'center', margin: 6, color: 'darkslategrey' }}>
                                             {restInfo.name}
                                         </Text>
-                                        <Text style={{ color: 'goldenrod', fontWeight: '600',  textAlign: 'center', }}>⭐ {restInfo.rating.toFixed(1)}</Text>
+                                        <Text style={{ color: 'goldenrod', fontWeight: '600', textAlign: 'center', }}>⭐ {restInfo.rating.toFixed(1)}</Text>
                                     </View>
                                 </View>
                             </View>
@@ -111,27 +119,31 @@ const RestaurantModal: React.FC<IRestaurantModal> = ({ restFeed, unselect, WIDTH
                             <View accessibilityRole="menubar" style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                                 {menuel.map((e: any, index: number) => <View style={{ flexDirection: 'column', justifyContent: 'center' }}>
                                     {index !== selectedCategory ? <View style={{ backgroundColor: '#fff', width: "100%", margin: 8 }}>
-                                        <Button title={e.category} color={index%2 === 0 ? "#38757b" : "#81aba8"} onPress={() => setCategory(index)}/>
+                                        <Button title={e.category} color={index % 2 === 0 ? "#38757b" : "#81aba8"} onPress={() => setCategory(index)} />
                                     </View>
                                         :
-                                        <Text style={{ textAlign: 'center', fontWeight: '600', fontSize: 18, color: 'mediumpurple' }}>{e.category}</Text>
+                                        <Text style={{ textAlign: 'center', fontWeight: '600', fontSize: 22, margin: 8, color: 'mediumpurple', textTransform: 'capitalize' }}>{e.category}</Text>
                                     }
                                     <View accessibilityRole="menu">
 
-                                        {e.item.map((e: any) => index === selectedCategory ? <View style={{ flexDirection: 'row', margin: '0.4em' }} accessibilityRole="menuitem">
-                                            <View style={{ width: '80vw' }}>
-                                                <Text style={{ fontWeight: '700',  color: 'darkslategrey' }}>{e.name}</Text>
-                                                <Text style={{ fontWeight: '500', color: 'darkslategrey' }}>{e.desc}</Text>
+                                        {e.item.map((e: any, i: number) => index === selectedCategory ? <TouchableHighlight key={i + e.name}>
+                                            <View style={{
+                                                flexDirection: 'row', padding: 8, margin: '0.4em', opacity: restInfo.isOpen ? 1 : 0.4,
+                                                backgroundColor: i % 2 === 0 ? '#efefef' : '#fefefe', borderRadius: 6
+                                            }} accessibilityRole="menuitem">
+                                                <View style={{ width: '80vw' }}>
+                                                    <Text style={{ fontWeight: '700', color: 'darkslategrey' }}>{e.name}</Text>
+                                                    <Text style={{ fontWeight: '500', color: 'darkslategrey' }}>{e.desc}</Text>
+                                                </View>
+                                                <View style={{ width: '12vw' }}>
+                                                    <Text >${e.prices[0]}</Text>
+                                                </View>
                                             </View>
-                                            <View style={{ width: '12vw' }}>
-                                                <Text >${e.prices[0]}</Text>
-                                            </View>
-                                        </View> : '')}
+                                        </TouchableHighlight> : '')}
                                     </View>
                                 </View>
                                 )}
                             </View>
-
                         </View>
                         <View style={{ flexDirection: 'column', alignItems: "center", margin: 12 }}>
                             <Text style={{ textAlign: 'center', padding: 4, margin: 8, color: '#666' }}>
@@ -140,7 +152,7 @@ const RestaurantModal: React.FC<IRestaurantModal> = ({ restFeed, unselect, WIDTH
                             <View style={{
                                 flexDirection: 'row', alignItems: 'center'
                             }}>
-                                <Button title="❕ REPORT A PROBLEM" color={'mediumpurple'} onPress={() => console.log('a')}/>                               
+                                <Button title="❕ REPORT A PROBLEM" color={'mediumpurple'} onPress={() => console.log('a')} />
                             </View>
                         </View>
                     </ScrollView>
@@ -150,8 +162,8 @@ const RestaurantModal: React.FC<IRestaurantModal> = ({ restFeed, unselect, WIDTH
                                 flexDirection: 'row', alignItems: 'center',
                                 height: 32, justifyContent: 'space-around', backgroundColor: '#ffffff77'
                             }}>
-                                <Text style={{ opacity: 0.6 }}>🔴</Text>
-                                <Text style={{ opacity: 0.6 }}>🔴</Text>
+                                <Text style={{ opacity: 0.6 }}><Emoji emoji="🔴" label="exit" /></Text>
+                                <Text style={{ opacity: 0.6 }}><Emoji emoji="🔴" label="exit" /></Text>
                             </View>
                         </TouchableHighlight>
                     </View>
@@ -171,14 +183,8 @@ const mapStateToProps = (state: TmainState) => {
     const t = state;
     return {
         restFeed: t.restFeed,
-        WIDTH: t.windowWidth,
     }
 }
 
-const mapDispatchToProps = (dispatch: any) => {
-    return {
-        unselect: () => dispatch({ type: ACTIONS.selectRestaurant, payload: -1 }),
-    }
-}
 
-export default connect(mapStateToProps, mapDispatchToProps)(RestaurantModal);
+export default connect(mapStateToProps)(RestaurantModal);

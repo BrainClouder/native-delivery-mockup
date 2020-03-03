@@ -13,12 +13,6 @@ const createRestFeed = () => {
         const Rpromo: boolean = Math.random() < 0.1;        
         const timeToDeliver = ['20-40', '25-45', '30-60', '40-60', '40-90', '60-90', '60-120'][Math.floor(Math.random() * 7)];
         const RisOpen: boolean = todayHour < 13 && 7 < todayHour ? Math.random() < 0.2 : todayHour >= 13 && 17 > todayHour ? Math.random() < 0.4 : todayHour >= 17 || todayHour < 0 ? Math.random() < 0.8 : Math.random() < 0.52;
-        // const randomTime: number = Math.floor(Math.random() * 5);
-        // const timeMinus: number = todayHour - randomTime;
-        // const timePlus: number = todayHour + randomTime + 1;
-        // const openingTime: string | number = timeMinus < 0 ? 23 - randomTime : timeMinus < 10 ? `0${timeMinus}`: timeMinus;
-        // const closingTime: string | number = timePlus > 23 ? `0${timePlus - 23}` : timePlus < 10 ? `0${timePlus}` : timeMinus;
-        // const RopenTime: string = RisOpen ? `${openingTime}:00 - ${closingTime}:00` : ``;
         ofTheKing.push({
           name: Rname,
           category: Rcategory,
@@ -40,7 +34,7 @@ const feed = createRestFeed();
 const initialState = {
     restFeed: feed,
     selectedRestaurant: -1,
-    showMode: false,
+    showMode: Math.random() < 0.3,
 
 }
 
