@@ -40,18 +40,23 @@ const AppBar: React.FC<IAppBar> = ({ showMode, toggleShow }) => {
       <Text>{userInfo.name}</Text>
       <Text>{userInfo.age} years</Text>
       <View>
-        <TouchableHighlight onPress={() => setModal(1)}>
+        {/* <TouchableHighlight onPress={() => setModal(1)}>
           <Text>
-            <Emoji label="edit" emoji="can" />
+            <Emoji label="edit" emoji="🚌" />
           </Text>
-        </TouchableHighlight>
+        </TouchableHighlight> */}
         {userInfo.address.map((e: string) => <Text>{e}</Text>)}
       </View>
     </View>
     ,
     <View>
       {userInfo.address.length === 0 ? <Text>Please enter your address</Text> : <Text>Here you can manage your addresses</Text>}
-      {userInfo.address.map((e: string, index: number) => <View style={{ flexDirection: 'row' }}><Text>{e}</Text> <TouchableHighlight onPress={() => {
+      {userInfo.address.map((e: string, index: number) => <View style={{ flexDirection: 'row' }}> <TouchableHighlight onPress={() => setUser((prevState) => {
+        return {
+          ...prevState,
+          selectedAddress: index
+        }
+      })}><Text style={{fontWeight: index === userInfo.selectedAddress ? '900' : '500'}}>{e}</Text></TouchableHighlight> <TouchableHighlight onPress={() => {
         let a = [...userInfo.address];
         a.splice(index, 1)
         setUser((prevState) => {
@@ -61,15 +66,27 @@ const AppBar: React.FC<IAppBar> = ({ showMode, toggleShow }) => {
           }
         });
       }}>
-        <Emoji label="remove" emoji="❌" />
-      </TouchableHighlight></View>)}
+          <Emoji label="remove" emoji="❌" />
+        </TouchableHighlight></View>)
+      }
 
-      {inputAddress.active ? <View style={{ flexDirection: 'row' }}>
+      {inputAddress.active ? <View style={{ flexDirection: 'row', alignItems: 'center', margin: 8, padding: 4 }}>
         <View>
-          <TextInput value={inputVal} onChange={(text) => console.log(text)}></TextInput>
+          {/* <TextInput value={inputVal} onChange={(text) => console.log(text)}></TextInput>
+           */}
+          <input type="text" value={inputVal} onChange={(event) => setInput(event.target.value)} />
         </View>
 
-        <TouchableHighlight>
+        <TouchableHighlight onPress={() => {
+          const a = [...userInfo.address];
+          a.push(inputVal);
+          setUser((prevState) => {
+            return {
+              ...prevState,
+              address: a,
+            }
+          })
+        }}>
           <View style={{ backgroundColor: '#222', borderRadius: 50, alignItems: 'center' }}>
             <Text style={{ color: '#eee', fontSize: 16 }}>+</Text>
           </View>
