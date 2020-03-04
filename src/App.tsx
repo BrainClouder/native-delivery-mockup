@@ -1,25 +1,16 @@
-import React, { Component, useState, useEffect } from "react";
+import React, { } from "react";
 
 import {
-  Button, Image, StyleSheet, Text, View, ScrollView, TouchableHighlight,
-  TextInput
+  Image, StyleSheet, View, ScrollView
 } from "react-native";
 import { connect } from 'react-redux';
 
-import MenuDark from './imgs/png/menu-dark.png';
-import MenuLight from './imgs/png/menu-light.png';
-import SearchDark from './imgs/png/search-dark.png';
-import SearchLight from './imgs/png/search-light.png';
-import ChatDark from './imgs/png/chat-dark.png';
-import ChatLight from './imgs/png/chat-light.png';
 import SlideShowCase from "./_components/util/SlideShowCase";
 import { TmainState, ACTIONS } from "./store/actions/main";
 import AppBar from "./_components/util/AppBar";
-import RestaurantModal from "./_components/RestaurantModal";
 
 interface IApp {
   selectedRest: number;
-  WIDTH: number;
   Link: (e: string) => void;
 }
 
@@ -54,7 +45,7 @@ const App: React.FC<IApp> = ({ selectedRest, Link }) => {
     },
     bannerImage: {
       width: '100%',
-      height: 125,
+      height: 150,
     }
   });
 
@@ -65,15 +56,15 @@ const App: React.FC<IApp> = ({ selectedRest, Link }) => {
   return (<>
     {/* <AppBar /> */}
     <View style={{ backgroundColor: '#eee', opacity: selectedRest !== -1 ? 0.5 : 1 }}>
-      <ScrollView style={{ height: '88vh' }}>
+      <AppBar Link={Link} />
+      <ScrollView style={{ height: '100vh', width: '100vw' }}>
         <View style={{
           alignItems: 'center'
         }}>
-          <Image source={{ uri: `https://picsum.photos/1024/140` }} style={styles.bannerImage} />
+          <Image source={{ uri: `https://picsum.photos/1024/160` }} style={styles.bannerImage} />
         </View>
         {sliderBody}
       </ScrollView>
-      <AppBar/>
     </View>
 
     {/* {selectedRest !== -1 ? <RestaurantModal /> : ''} */}
@@ -86,7 +77,6 @@ const mapStateToProps = (state: TmainState) => {
   const t = state;
   return {
     selectedRest: t.selectedRestaurant,
-    WIDTH: t.windowWidth,
   }
 }
 

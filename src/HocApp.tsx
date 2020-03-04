@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import App from './App';
-import { Provider, connect } from 'react-redux';
+import { Provider } from 'react-redux';
 import store from './store/reducer/main';
-import { View, TouchableHighlight, Text, ScrollView } from 'react-native';
 import RestaurantModal from './_components/RestaurantModal';
+import LogoutPage from './_components/LogoutPage';
 
 
 const HocApp: React.FC = () => {
 	const [activeRoute, setRoute] = useState(0);
-	const [routeList] = useState(['home', 'restaurant']);
+	const [routeList] = useState(['home', 'restaurant', 'logout']);
 	const [param, setParam] = useState(-1);
 
 	const changeRoute = (ne: string, param?: any) => {		
@@ -18,7 +18,8 @@ const HocApp: React.FC = () => {
 	}
 
 	const componentList = [<App Link={changeRoute}/>, 
-	<RestaurantModal Link={changeRoute} selected={param}/>]
+	<RestaurantModal Link={changeRoute} selected={param}/>,
+	<LogoutPage Link={changeRoute} />]
 
 	return (<>
 		<Provider store={store}>

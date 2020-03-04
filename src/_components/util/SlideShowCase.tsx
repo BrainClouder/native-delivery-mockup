@@ -88,8 +88,8 @@ const SlideShowCase: React.FC<ISlider> = ({ feed, filterType, showMode, Link }) 
             },
             alignItems: 'center',
             backgroundColor: 'mediumpurple',
-            paddingHorizontal: '0.3em',
-            paddingVertical: '0.1em',
+            paddingHorizontal: 2,
+            paddingVertical: 1,
             borderRadius: 5,
             marginHorizontal: showMode ? 8 : 0,
         },
@@ -110,16 +110,18 @@ const SlideShowCase: React.FC<ISlider> = ({ feed, filterType, showMode, Link }) 
             marginHorizontal: showMode ? 8 : 0,
         },
         ratingText: {
-            fontWeight: '900',
-            padding: '0.1em',
+            fontWeight: '700',
+            fontSize: 12,
+            padding: 1,
             color: 'white',
-            margin: '0.1em'
+            margin: 2
         },
         deliveryFeeText: {
-            fontWeight: '900',
-            padding: '0.1em',
+            fontWeight: '700',
+            fontSize: 12,
+            padding: 2,
             color: '#fff',
-            margin: '0.1em'
+            margin: 2
         },
 
 
@@ -160,39 +162,54 @@ const SlideShowCase: React.FC<ISlider> = ({ feed, filterType, showMode, Link }) 
                 alignItems: 'center',
 
             }}>
-                <Text style={styles.titleCat}>{['Offer + Free Delivery', ['Free Delivery'], ['Offers'], ['Open'], ['Closed']][filterType]}</Text>
+                <Text style={styles.titleCat}>
+                    {['Offer + Free Delivery', ['Free Delivery'], ['Offers'], ['Open'], ['Closed']][filterType]}
+                </Text>
             </View>
             <ScrollView horizontal={!showMode} style={{}}>
                 <View style={styles.restContainer}  >
-                    {filteredList.map((e: any, index: number) => {
+                    {filteredList.map(
+                        (e: any, index: number) => {
                         const ratingFee = (<View style={styles.infoContainer}>
                             <View style={styles.ratingContainer}>
-                                <Text style={styles.ratingText}><Emoji emoji="⭐" label="star" /> {e.rating.toFixed(1)}</Text>
+                                <Text style={styles.ratingText}>
+                                    <Emoji emoji="⭐" label="star" /> {e.rating.toFixed(1)}
+                                </Text>
                             </View>
                             <View style={styles.deliveryFeeContainer}>
                                 <Text style={styles.deliveryFeeText}>
-                                    <Emoji emoji="🛵" label="deliver" />{e.deliveryFee <= 0 ? 'FREE' : `$${e.deliveryFee.toFixed(2)}`}
+                                    <Emoji emoji="🛵" label="deliver" />
+                                    {e.deliveryFee <= 0 ? 'FREE' : `$${e.deliveryFee.toFixed(2)}`}
                                 </Text>
                             </View>
                         </View>);
                         return (<TouchableHighlight onPressOut={() => Link('restaurant', feed.indexOf(e))}>
-                            <View key={e.name + index} style={e.isOpen ? [styles.showCase] : [styles.disabledShowCase, styles.showCase]}>
+                            <View key={e.name + index}
+                                style={e.isOpen ? [styles.showCase] : [styles.disabledShowCase, styles.showCase]}>
                                 <Image source={{ uri: e.image }} style={{
-
                                     width: showMode ? 75 : 150, height: showMode ? 75 : 150,
                                     borderTopLeftRadius: 6, borderTopRightRadius: 6,
-                                    borderBottomLeftRadius: showMode ? 6 : 0, borderBottomRightRadius: showMode ? 6 : 0,
+                                    borderBottomLeftRadius: showMode ? 6 : 0, 
+                                    borderBottomRightRadius: showMode ? 6 : 0,
                                 }} />
                                 {showMode ? '' : ratingFee}
                                 <View style={styles.restInfoContainer}>
                                     <Text style={styles.restInfoName}>{e.name}</Text>
-                                    {showMode ? <View style={{ flexDirection: 'row', justifyContent: 'center' }}><Text><Emoji emoji="⭐" label="star" /> {e.rating.toFixed(1)}</Text>
+                                    {showMode ? <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
                                         <Text>
-                                            <Emoji emoji="🛵" label="deliver" />{e.deliveryFee === 0 ? 'free' : `$${e.deliveryFee}`}
+                                            <Emoji emoji="⭐" label="star" /> {e.rating.toFixed(1)}
+                                        </Text>
+                                        <Text>
+                                            <Emoji emoji="🛵" label="deliver" />{e.deliveryFee === 0 ?
+                                                'free' : `$${e.deliveryFee}`}
                                         </Text>
                                     </View> : ''}
-                                    <Text style={styles.restInfoCategory}>{e.category}</Text>
-                                    <Text style={{ fontSize: 14 }}><Emoji emoji="🕑" label="time" /> {e.time} min</Text>
+                                    <Text style={styles.restInfoCategory}>
+                                        {e.category}
+                                    </Text>
+                                    <Text style={{ fontSize: 14 }}>
+                                        <Emoji emoji="🕑" label="time" /> {e.time} min
+                                    </Text>
 
                                 </View>
                             </View>

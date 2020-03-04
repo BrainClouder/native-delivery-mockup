@@ -1,5 +1,5 @@
 import { createStore } from "redux";
-import { ACTIONS } from "../actions/main";
+import { ACTIONS, TmainState } from "../actions/main";
 
 const createRestFeed = () => {
     const ofTheKing = [];
@@ -31,15 +31,46 @@ const feed = createRestFeed();
 
 
 
-const initialState = {
+const initialState: TmainState = {
     restFeed: feed,
     selectedRestaurant: -1,
     showMode: Math.random() < 0.3,
-
+    cartList: [],
+    userInfo: {
+        name: 'Kevin Scott', 
+        age: 26, 
+        selectedAddress: 0,
+        address: ['Loram apsum tower II, 77, Mars', 'Dinum bog resort, 42, Mars'],
+        image: 'https://i.stack.imgur.com/qrzo6.png?s=328&g=1',
+        deliveries: 35    
+      },
+      imageRepo: [
+          ['','']
+        
+        ],
 }
 
 const main = (state = initialState, action: any) => {
     switch (action.type) {
+        case ACTIONS.updateUser:
+            return {
+                ...state,
+                userInfo:  action.payload
+            }
+        case ACTIONS.cartRemoveItem:
+            const rem = [...state.cartList];
+            rem.splice(action.payload, 1);
+            return {
+                ...state,
+                cartList: rem,
+            }
+        case ACTIONS.cartAdd:
+            const a = [...state.cartList];
+            a.push(action.payload);
+            return {
+                ...state,
+                cartList: a
+            }
         case ACTIONS.toggleShow:
             return {
                 ...state,
