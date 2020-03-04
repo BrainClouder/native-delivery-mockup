@@ -3,33 +3,37 @@ import { View, Text, ScrollView, Image, TouchableHighlight, Button, BackHandler,
 import { connect } from 'react-redux';
 import { TmainState, ACTIONS } from '../store/actions/main';
 import Emoji from './util/Emoji';
+import ItemDetailModal from './ItemDetailModal';
+import RestaurantCartModal from './RestaurantCartModal';
+import CartButton from './util/CartButton';
 
 
 interface IRestaurantModal {
     restFeed: any;
     selected: any;
     Link: (e: string) => void;
+    selectItem: (e: {name: string, desc: string, prices: any[]}) => void;
+    clearCart: () => void;
 }
 
-const RestaurantModal: React.FC<IRestaurantModal> = ({ restFeed, Link, selected }) => {
+const RestaurantModal: React.FC<IRestaurantModal> = ({ restFeed, selectItem, Link, selected, clearCart }) => {
     const [selectedCategory, setCategory] = useState(-1);
-    const [imgSeed] = useState(`https://picsum.photos/${window.innerWidth}/${Math.floor(Math.random() * 20 + 200)}`);
+    const [imgSeed] = useState(Math.floor(Math.random() * 27));
     const [restCart, setCart] = useState([]);
-
-    const [optItem, setOpt] = useState([['', 0]]);
-    const [optCount, setOptCount] = useState([0]);
     const [modalMode, setModal] = useState(-1);
-    const [observation, setObservation] = useState('');
-    const [itemSelected, selectItem] = useState({
-        name: '', desc: '', price: 0, optArray: []
-    })
+
+    const goBackHandler = () => {
+        clearCart();
+        Link('home');
+    }
 
     useEffect(() => {
-        BackHandler.addEventListener('hardwareBackPress', () => Link('home'));
+        
+        BackHandler.addEventListener('hardwareBackPress', () => goBackHandler);
         return () => {
-            BackHandler.removeEventListener('hardwareBackPress', () => Link('home'));
+            BackHandler.removeEventListener('hardwareBackPress', () => goBackHandler);
         }
-    }, [Link]);
+    }, [goBackHandler]);
 
     const [menuel] = useState(() => {
         const menuArray = [];
@@ -68,138 +72,17 @@ const RestaurantModal: React.FC<IRestaurantModal> = ({ restFeed, Link, selected 
         return menuArray;
     })
 
-    const handlerSelectItem = (e: any) => {
-        const optGenerator = () => {
-            const optArray: [string, number][] = [];
-            const number = Math.floor(Math.random() * 10);
-            for (let i = 0; i <= number; i++) {
-                const randomOpt = ['nurja', 'ajram', 'eg', 'lorem', 'nurum', 'inkan', 'cerum']
-                [Math.floor(Math.random() * 7)]
-                optArray.push([randomOpt, Math.floor(Math.random() * 5 + 1)]);
-            }
-            return optArray;
-        }
-        const optionsCreator: any = [...optGenerator()];
-        selectItem({
-            name: e.name,
-            desc: e.desc,
-            price: e.price,
-            optArray: optionsCreator,
-        });
+    const handlerSelectItem = (e: {name: string, desc: string, prices: any[]}) => {
+        selectItem(e);
         setModal(0);
     }
 
-    const handlerAddOpt = (opt: any) => {
-        const a = [...optItem];
-        let b = [...optCount];
-        if (a.indexOf(opt) === -1) {
-            a.push(opt);
-            b.push(1);
-            setOpt(a);
-            setOptCount(b);
-        } else {
-            b[a.indexOf(opt)]++;
-            setOptCount(b);
-        }
-    }
-
-    const handlerRemoveOpt = (opt: any) => {
-        const a = [...optItem];
-        let b = [...optCount];
-        b[a.indexOf(opt)]--;
-        if (b[a.indexOf(opt)] <= 0) {
-            a.splice(a.indexOf(opt), 1);
-            setOpt(a);
-        }
-        setOptCount(b);
-    }
-
+    
 
     const modalList = [
-        <View style={styles.modalContainer}>
-            <View style={{
-                backgroundColor: '#ddd', width: '100%',
-                borderTopLeftRadius: 8, borderTopRightRadius: 8
-            }}>
-                <Text style={styles.modalTitle}>User Profile</Text>
-            </View>
-            <View style={styles.innerContainer}>
-                <View style={{ flexDirection: 'row' }}>
-                    <Text style={styles.baseModalText}>
-                        {itemSelected.name}
-                    </Text>
-                    <Text style={styles.baseModalText}>
-                        {itemSelected.price}
-                    </Text>
-                </View>
-                <Text style={styles.baseModalText}>
-                    {itemSelected.desc}
-                </Text>
-                <Text style={styles.baseModalText}>
-                    {itemSelected.optArray.length > 0 ? 'Options' : 'Sorry, no options :('}
-                </Text>
-                <View>
-
-                    {
-                    itemSelected.optArray.map((opt: [string, number]) => <View style={{
-                        flexDirection: 'row', justifyContent: 'space-between', 
-                        alignContent: 'center',
-                    }}>
-                        <View style={{ flexDirection: 'row', alignContent: 'center', alignItems: 'center' }}>
-                            {optItem.indexOf(opt) !== -1 ? <TouchableHighlight style={{margin: 2}}
-                            onPress={() => handlerRemoveOpt(opt)}>
-                                <Text style={{color: '#eee', fontSize: 22 }}>
-                                    -
-                                </Text>
-                            </TouchableHighlight>
-                                : <Text style={{color: '#333', fontSize: 22, margin: 2}}>-</Text>}
-
-                            <Text style={{ color: '#eee', fontSize: 16, margin: 2 }}>
-                                {optItem.indexOf(opt) !== -1 ? optCount[optItem.indexOf(opt)] : 'O'}
-                            </Text>
-                            <TouchableHighlight style={{justifyContent: 'center', margin: 2}} onPress={() => handlerAddOpt(opt)}>
-                                <Text style={{color: '#eee', fontSize: 22}}>
-                                    +
-                                </Text>
-                            </TouchableHighlight>
-                        </View>
-                        <Text style={styles.baseModalText}>
-                            {opt[0]}
-                        </Text>
-                        <Text style={styles.baseModalText}>
-                            ${opt[1]}
-                        </Text>
-                    </View>)}
-                </View>
-
-                <View>
-                    <Text style={styles.baseModalText}>
-                        Anything else?
-                    </Text>
-                    <TextInput style={{ backgroundColor: '#eee' }} multiline value={observation} onChangeText={setObservation} />
-                </View>
-
-                <View>
-                    <Text style={styles.baseModalText}>
-                        Total:
-                </Text>
-                    <View >
-                        <Text style={styles.baseModalText}>
-                            Units
-                    </Text>
-                    </View>
-                </View>
-
-                <Button title="Add to cart" onPress={() => console.log('action')} color="crimson" />
-            </View>
-
-        </View>
+        <ItemDetailModal setModal={setModal} />
         ,
-        <View>
-            <Text>
-                Item chart
-            </Text>
-        </View>
+        <RestaurantCartModal setModal={setModal} />
     ]
 
     const restInfo = restFeed[selected];
@@ -213,7 +96,7 @@ const RestaurantModal: React.FC<IRestaurantModal> = ({ restFeed, Link, selected 
                             flexDirection: 'column'
                         }}>
                             <View>
-                                <Image source={{ uri: imgSeed }}
+                                <Image source={ require(`../imgs/png/food/${imgSeed}.png`)}
                                     style={{
                                         width: '100%',
                                         height: 175, borderColor: '#333', borderBottomWidth: 4
@@ -224,7 +107,7 @@ const RestaurantModal: React.FC<IRestaurantModal> = ({ restFeed, Link, selected 
                                             borderRadius: 14,
                                             backgroundColor: '#eee'
                                         }}>
-                                            <Image source={{ uri: restInfo.image }} style={{
+                                            <Image source={require(`../imgs/png/food/${restInfo.image}.png`)} style={{
                                                 width: 100, height: 100, borderRadius: 12,
                                                 borderColor: '#333', borderWidth: 4,
                                             }} />
@@ -308,7 +191,7 @@ const RestaurantModal: React.FC<IRestaurantModal> = ({ restFeed, Link, selected 
                         </View>
                     </ScrollView>
                     <View style={{ position: 'absolute', top: 0, left: 0, width: '100%' }}>
-                        <TouchableHighlight onPress={() => Link('home')} >
+                        <TouchableHighlight onPress={goBackHandler} >
                             <View style={{
                                 alignItems: 'center',
                                 backgroundColor: '#ffffff77'
@@ -329,16 +212,7 @@ const RestaurantModal: React.FC<IRestaurantModal> = ({ restFeed, Link, selected 
                         </TouchableHighlight>
                     </View>
 
-                    <View style={{
-                        position: 'absolute', top: '10%', right: '10%',
-                    }}>
-                        <View>
-                            <Text>
-                                {restCart.length}
-                            </Text>
-                        </View>
-                        <Button title="my order 🛒" color="crimson" onPress={() => setModal(1)} />
-                    </View>
+                   
                     {modalList[modalMode] !== undefined ? <>
                         <TouchableHighlight onPress={() => setModal(-1)} style={{ backgroundColor: '#222', zIndex: 5, position: 'absolute', width: '100%', height: '100%', top: 0, left: 0, opacity: 0.6 }}>
                             <View></View>
@@ -354,6 +228,8 @@ const RestaurantModal: React.FC<IRestaurantModal> = ({ restFeed, Link, selected 
                         </View>
 
                     </> : ''}
+
+                    <CartButton setModal={setModal} />
                 </View>
             </View>
         </>
@@ -386,12 +262,14 @@ const mapStateToProps = (state: TmainState) => {
     const t = state;
     return {
         restFeed: t.restFeed,
-        cartList: t.cartList,
+        cartList: t.cartList,        
     }
 }
 const mapDispatchToProps = (dispatch: any) => {
     return {
-        addToCart: (e: any) => dispatch({ type: ACTIONS.cartAdd, payload: e })
+        selectItem: (e: {name: string, desc: string, prices: any[]}) => dispatch({type: ACTIONS.changeSelectedItem, payload: e}),
+        addToCart: (e: any) => dispatch({ type: ACTIONS.cartAdd, payload: e }),
+        clearCart: () => dispatch({type: ACTIONS.clearCart}),
     }
 }
 

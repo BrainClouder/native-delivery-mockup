@@ -5,9 +5,9 @@ import {
 } from "react-native";
 import { connect } from 'react-redux';
 
-import SlideShowCase from "./_components/util/SlideShowCase";
+import SlideShowCase from "./_components/SlideShowCase";
 import { TmainState, ACTIONS } from "./store/actions/main";
-import AppBar from "./_components/util/AppBar";
+import AppBar from "./_components/AppBar";
 
 interface IApp {
   selectedRest: number;
@@ -62,6 +62,8 @@ const App: React.FC<IApp> = ({ selectedRest, Link }) => {
           alignItems: 'center'
         }}>
           <Image source={{ uri: `https://picsum.photos/1024/160` }} style={styles.bannerImage} />
+          
+          {/* <Image source={require('./imgs/png/food/0.png')} style={styles.bannerImage} /> */}
         </View>
         {sliderBody}
       </ScrollView>

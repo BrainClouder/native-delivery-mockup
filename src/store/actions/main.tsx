@@ -4,11 +4,15 @@ const toggleShow: string = 'TOGGLE-SHOW';
 const cartRemoveItem: string = 'CART-REMOVE-ITEM';
 const cartAdd: string = 'ADD-CART-ITEM';
 const updateUser: string = 'UPDATE-USER';
+const clearCart: string = 'CLEAR-CART';
+
+const changeSelectedItem: string ='CHANGE-ITEM-SELECTED';
+
 
 
 export const ACTIONS = {
     selectRestaurant, refreshWidth, toggleShow, cartRemoveItem, cartAdd,
-    updateUser, 
+    updateUser, changeSelectedItem, clearCart
 }
 
 export type TmainState = {
@@ -16,13 +20,15 @@ export type TmainState = {
         name: string,
         category: string,
         rating: number,
-        image: string,
+        image: number,
+        imageAttribution: string,
         deliveryFee: number,
         promo: boolean,
         isOpen: boolean,
       }[],
     selectedRestaurant: number,
     showMode: boolean,
+    itemSelected: {name: string, desc: string, prices: number[]},
     cartList: {name: string, desc: string, price: number, restaurant: number}[] | [],
     userInfo:{
         name: string, 
@@ -32,6 +38,4 @@ export type TmainState = {
         image: string, 
         deliveries: number    
       },
-      imageRepo: [string, string][]
-
 }

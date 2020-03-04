@@ -1,8 +1,9 @@
 import React from 'react';
 import { Image, StyleSheet, Text, View, ScrollView, TouchableHighlight } from "react-native";
 import { connect } from 'react-redux';
-import { ACTIONS } from '../../store/actions/main';
-import Emoji from './Emoji';
+import { ACTIONS } from '../store/actions/main';
+import Emoji from './util/Emoji';
+import aer from '../imgs/png/food/1.png';
 interface ISlider {
     feed: any;
     filterType: number;
@@ -186,7 +187,7 @@ const SlideShowCase: React.FC<ISlider> = ({ feed, filterType, showMode, Link }) 
                         return (<TouchableHighlight onPressOut={() => Link('restaurant', feed.indexOf(e))}>
                             <View key={e.name + index}
                                 style={e.isOpen ? [styles.showCase] : [styles.disabledShowCase, styles.showCase]}>
-                                <Image source={{ uri: e.image }} style={{
+                                <Image source={require(`../imgs/png/food/${e.image}.png`)} style={{
                                     width: showMode ? 75 : 150, height: showMode ? 75 : 150,
                                     borderTopLeftRadius: 6, borderTopRightRadius: 6,
                                     borderBottomLeftRadius: showMode ? 6 : 0, 
@@ -228,7 +229,6 @@ const mapStateToProps = (state: any) => {
     const t = state;
     return {
         feed: t.restFeed,
-        WIDTH: t.windowWidth,
         showMode: t.showMode,
     }
 }

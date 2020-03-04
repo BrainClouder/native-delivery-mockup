@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { Image, Text, View, TouchableHighlight, TextInput, StyleSheet, Linking, Button } from "react-native";
-import Emoji from './Emoji';
-import GitHubLight from '../../imgs/png/GitHub-Mark-Light-32px.png';
-import { TmainState, ACTIONS } from '../../store/actions/main';
+import Emoji from './util/Emoji';
+import GitHubLight from '../imgs/png/GitHub-Mark-Light-32px.png';
+import { TmainState, ACTIONS } from '../store/actions/main';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-native';
-import UserModal from '../UserModal';
-import AddressModal from '../AddressModal';
+import UserModal from './UserModal';
+import AddressModal from './AddressModal';
+import OrderHistoryModal from './OrderHistoryModal';
+import PaymentUserModal from './PaymentUserModal';
 
 interface IAppBar {
   showMode: boolean;
@@ -41,17 +43,9 @@ const AppBar: React.FC<IAppBar> = ({ showMode, toggleShow, Link, userInfo, updat
     ,
     <AddressModal Link={Link} />
     ,
-    <View>
-      <Text>
-        Orders
-      </Text>
-    </View>
+    <OrderHistoryModal setModal={setModal} />
     ,
-    <View>
-      <Text>
-        My payment methods
-      </Text>
-    </View>
+    <PaymentUserModal setModal={setModal} />
 
   ]
 
@@ -77,9 +71,9 @@ const AppBar: React.FC<IAppBar> = ({ showMode, toggleShow, Link, userInfo, updat
 
 
     <View style={{
-      position: 'absolute', zIndex: 5, top: 0, left: 5, height: 75,
-      justifyContent: 'center', backgroundColor: '#111', borderBottomLeftRadius: 10,
-      borderBottomRightRadius: 10
+      position: 'absolute', zIndex: 5, top: 0, left: 5,
+      justifyContent: 'center', backgroundColor: '#111', borderBottomLeftRadius: 50,
+      borderBottomRightRadius: 50
     }}>
       <TouchableHighlight onPress={() => setModal(0)}>
         <Image style={[{ width: 40, height: 40 }, styles.avatarImage]}
@@ -142,7 +136,7 @@ const AppBar: React.FC<IAppBar> = ({ showMode, toggleShow, Link, userInfo, updat
 const styles = StyleSheet.create({
   avatarImage: {
     borderRadius: 50,
-    marginHorizontal: '0.5em',
+    margin: 6
   },
   addressBarStyle: {
     flexDirection: 'row-reverse',
