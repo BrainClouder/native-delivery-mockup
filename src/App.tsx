@@ -5,16 +5,15 @@ import {
 } from "react-native";
 import { connect } from 'react-redux';
 
-import SlideShowCase from "./_components/SlideShowCase";
+import SlideShowCase from "./_components/util/SlideShowCase";
 import { TmainState, ACTIONS } from "./store/actions/main";
 import AppBar from "./_components/AppBar";
 
 interface IApp {
-  selectedRest: number;
   Link: (e: string) => void;
 }
 
-const App: React.FC<IApp> = ({ selectedRest, Link }) => {
+const App: React.FC<IApp> = ({ Link }) => {
 
   const styles = StyleSheet.create({
     scrollRoot: {
@@ -55,7 +54,7 @@ const App: React.FC<IApp> = ({ selectedRest, Link }) => {
   }
   return (<>
     {/* <AppBar /> */}
-    <View style={{ backgroundColor: '#eee', opacity: selectedRest !== -1 ? 0.5 : 1 }}>
+    <View style={{ backgroundColor: '#eee' }}>
       <AppBar Link={Link} />
       <ScrollView style={{ height: '100vh', width: '100vw' }}>
         <View style={{
@@ -74,18 +73,10 @@ const App: React.FC<IApp> = ({ selectedRest, Link }) => {
 }
 
 
-
-const mapStateToProps = (state: TmainState) => {
-  const t = state;
-  return {
-    selectedRest: t.selectedRestaurant,
-  }
-}
-
 const mapDispatchToProps = (dispatch: any) => {
   return {
     refreshWidth: () => dispatch({ type: ACTIONS.refreshWidth }),
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(mapDispatchToProps)(App);

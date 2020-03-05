@@ -19,7 +19,6 @@ interface IRestaurantModal {
 const RestaurantModal: React.FC<IRestaurantModal> = ({ restFeed, selectItem, Link, selected, clearCart }) => {
     const [selectedCategory, setCategory] = useState(-1);
     const [imgSeed] = useState(Math.floor(Math.random() * 27));
-    const [restCart, setCart] = useState([]);
     const [modalMode, setModal] = useState(-1);
 
     const goBackHandler = () => {
@@ -82,7 +81,7 @@ const RestaurantModal: React.FC<IRestaurantModal> = ({ restFeed, selectItem, Lin
     const modalList = [
         <ItemDetailModal setModal={setModal} />
         ,
-        <RestaurantCartModal setModal={setModal} />
+        <RestaurantCartModal setModal={setModal} selected={selected} />
     ]
 
     const restInfo = restFeed[selected];
@@ -217,7 +216,7 @@ const RestaurantModal: React.FC<IRestaurantModal> = ({ restFeed, selectItem, Lin
                         <TouchableHighlight onPress={() => setModal(-1)} style={{ backgroundColor: '#222', zIndex: 5, position: 'absolute', width: '100%', height: '100%', top: 0, left: 0, opacity: 0.6 }}>
                             <View></View>
                         </TouchableHighlight>
-                        <View style={{ position: 'absolute', top: '15%', width: '100%', left: 0, alignItems: 'center', zIndex: 5 }}>
+                        <View style={{ position: 'absolute', top: '1%', width: '100%', left: 0, alignItems: 'center', zIndex: 5 }}>
                             <View style={{
                                 borderRadius: 8,
                                 flexDirection: 'column', backgroundColor: '#222',
@@ -236,7 +235,6 @@ const RestaurantModal: React.FC<IRestaurantModal> = ({ restFeed, selectItem, Lin
         )
     } else {
         return (<>
-            <Text>aaaaaaaaaaa</Text>
         </>)
     }
 }
@@ -261,8 +259,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state: TmainState) => {
     const t = state;
     return {
-        restFeed: t.restFeed,
-        cartList: t.cartList,        
+        restFeed: t.restFeed,   
     }
 }
 const mapDispatchToProps = (dispatch: any) => {

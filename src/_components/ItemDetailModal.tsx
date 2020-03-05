@@ -56,10 +56,11 @@ const ItemDetailModal: React.FC<IitemModal> = ({ itemSelected, addToCart, setMod
         addToCart({
             name: itemSelected.name,
             desc: itemSelected.desc,
-            priceTotal: totalPrice,
+            price: totalPrice,
             units: quantity,
             opts: optItem,
-            numberOpts: optCount
+            numberOpts: optCount,
+            comment: observation,
         });
         setModal(-1);
     }
@@ -70,7 +71,7 @@ const ItemDetailModal: React.FC<IitemModal> = ({ itemSelected, addToCart, setMod
                 backgroundColor: '#ddd', width: '100%',
                 borderTopLeftRadius: 8, borderTopRightRadius: 8
             }}>
-                <Text style={styles.modalTitle}>User Profile</Text>
+                <Text style={styles.modalTitle}>Item Details</Text>
             </View>
             <View style={styles.innerContainer}>
                 <View style={{ flexDirection: 'row' }}>
@@ -78,7 +79,7 @@ const ItemDetailModal: React.FC<IitemModal> = ({ itemSelected, addToCart, setMod
                         {itemSelected.name}
                     </Text>
                     <Text style={styles.baseModalText}>
-                        {itemSelected.prices[0]}
+                        ${itemSelected.prices[0]}
                     </Text>
                 </View>
                 <Text style={styles.baseModalText}>
@@ -164,7 +165,9 @@ const ItemDetailModal: React.FC<IitemModal> = ({ itemSelected, addToCart, setMod
 
 const styles = StyleSheet.create({
     baseModalText: {
-        color: '#eee'
+        color: '#eee',
+        textAlign: 'center',
+        margin: 2
     },
     modalTitle: {
         color: '#333',

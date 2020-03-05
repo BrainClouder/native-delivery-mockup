@@ -82,7 +82,7 @@ const AppBar: React.FC<IAppBar> = ({ showMode, toggleShow, Link, userInfo, updat
     </View>
 
     <View style={{
-      position: 'absolute', top: 80, left: 10, zIndex: 5
+      position: 'absolute', top: 60, left: 6, zIndex: 5
     }}>
       <TouchableHighlight onPress={() => toggleShow(!showMode)} style={{
         borderColor: '#222', borderWidth: 4,

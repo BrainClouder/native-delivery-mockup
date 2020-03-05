@@ -69,7 +69,6 @@ const feed = createRestFeed();
 
 const initialState: TmainState = {
     restFeed: feed,
-    selectedRestaurant: -1,
     showMode: Math.random() < 0.3,
     cartList: [],
     itemSelected: {name: '', desc: '', prices: [0,0]},
