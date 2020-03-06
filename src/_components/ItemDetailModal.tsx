@@ -47,6 +47,7 @@ const ItemDetailModal: React.FC<IitemModal> = ({ itemSelected, addToCart, setMod
         b[a.indexOf(opt)]--;
         if (b[a.indexOf(opt)] <= 0) {
             a.splice(a.indexOf(opt), 1);
+            b.splice(a.indexOf(opt), 1);
             setOpt(a);
         }
         setOptCount(b);
@@ -67,28 +68,22 @@ const ItemDetailModal: React.FC<IitemModal> = ({ itemSelected, addToCart, setMod
 
     return (
         <View style={styles.modalContainer}>
-            <View style={{
-                backgroundColor: '#ddd', width: '100%',
-                borderTopLeftRadius: 8, borderTopRightRadius: 8
-            }}>
+            <View style={styles.titleContainer}>
                 <Text style={styles.modalTitle}>Item Details</Text>
             </View>
             <View style={styles.innerContainer}>
-                <View style={{ flexDirection: 'row' }}>
+                <View style={styles.itemNameContainer}>
                     <Text style={styles.baseModalText}>
-                        {itemSelected.name}
-                    </Text>
-                    <Text style={styles.baseModalText}>
-                        ${itemSelected.prices[0]}
+                        {itemSelected.name} for ${itemSelected.prices[0]}
                     </Text>
                 </View>
-                <Text style={styles.baseModalText}>
+                <Text style={[styles.baseModalText, styles.description]}>
                     {itemSelected.desc}
                 </Text>
-                <Text style={styles.baseModalText}>
-                    {optionsArray.length > 0 ? 'Options' : 'Sorry, no options :('}
-                </Text>
-                <View>
+                <View style={styles.listContainer}>
+                    <Text style={styles.baseModalText}>
+                        {optionsArray.length > 0 ? 'Addons:' : 'Sorry, no options :('}
+                    </Text>
 
                     {
                         optionsArray.map((opt: [string, number]) => <View style={{
@@ -96,19 +91,19 @@ const ItemDetailModal: React.FC<IitemModal> = ({ itemSelected, addToCart, setMod
                             alignContent: 'center',
                         }}>
                             <View style={{ flexDirection: 'row', alignContent: 'center', alignItems: 'center' }}>
-                                {optItem.indexOf(opt) !== -1 ? <TouchableHighlight style={{ margin: 2 }}
+                                {optItem.indexOf(opt) !== -1 || optItem.indexOf(opt) > 0  ? <TouchableHighlight style={{ margin: 2 }}
                                     onPress={() => handlerRemoveOpt(opt)}>
                                     <Text style={{ color: '#eee', fontSize: 22 }}>
                                         -
                                 </Text>
                                 </TouchableHighlight>
-                                    : <Text style={{ color: '#333', fontSize: 22, margin: 2 }}>-</Text>}
+                                    : <Text style={{opacity: 0}}>-</Text>}
 
-                                <Text style={{ color: '#eee', fontSize: 16, margin: 2 }}>
+                                <Text style={styles.baseModalText}>
                                     {optItem.indexOf(opt) !== -1 ? optCount[optItem.indexOf(opt)] : 0}
                                 </Text>
                                 <TouchableHighlight style={{ justifyContent: 'center', margin: 2 }} onPress={() => handlerAddOpt(opt)}>
-                                    <Text style={{ color: '#eee', fontSize: 22 }}>
+                                    <Text style={styles.baseModalText}>
                                         +
                                 </Text>
                                 </TouchableHighlight>
@@ -126,7 +121,7 @@ const ItemDetailModal: React.FC<IitemModal> = ({ itemSelected, addToCart, setMod
                     <Text style={styles.baseModalText}>
                         Anything else?
                     </Text>
-                    <TextInput style={{ backgroundColor: '#eee' }} multiline value={observation} onChangeText={setObservation} />
+                    <TextInput style={styles.textInputRoot} multiline value={observation} onChangeText={setObservation} />
                 </View>
                 <View style={{ flexDirection: 'column', alignContent: 'center', alignItems: 'center' }}>
                     <Text style={styles.baseModalText}>
@@ -167,17 +162,41 @@ const styles = StyleSheet.create({
     baseModalText: {
         color: '#eee',
         textAlign: 'center',
-        margin: 2
+        margin: 2,
+        fontSize: 14
     },
     modalTitle: {
         color: '#333',
         textAlign: 'center',
     },
+    listContainer: {
+        width: '80vw',
+        alignItems: 'stretch',
+        margin: 4,
+    },
+    titleContainer: {
+        backgroundColor: '#ddd',
+        width: '100%',
+        borderTopLeftRadius: 8,
+        borderTopRightRadius: 8
+    },
+    description: {
+        opacity: 0.8,
+        fontSize: 12,
+    },
     modalContainer: {
-        width: '100%'
+        width: '100%',
+        alignItems: 'center'
     },
     innerContainer: {
         padding: 8
+    },
+    textInputRoot: {
+        backgroundColor: '#eee'
+    },
+    itemNameContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center'
     }
 });
 const mapStateToProps = (state: TmainState) => {
@@ -189,7 +208,7 @@ const mapStateToProps = (state: TmainState) => {
 
 const mapDispatchToProps = (dispatch: any) => {
     return {
-        addToCart: (e: any) => dispatch({type: ACTIONS.cartAdd, payload: e})
+        addToCart: (e: any) => dispatch({ type: ACTIONS.cartAdd, payload: e })
     }
 }
 

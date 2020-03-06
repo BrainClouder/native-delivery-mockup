@@ -1,9 +1,8 @@
-import React from 'react';
-import { View, Text, Image, TouchableHighlight, Button, BackHandler, StyleSheet, TextInput } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, Image, TouchableHighlight, Button, BackHandler, StyleSheet, TextInput, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import { TmainState, TcartList, ACTIONS } from '../store/actions/main';
 import Emoji from './util/Emoji';
-
 
 
 interface IRestaurantCart {
@@ -36,11 +35,21 @@ const RestaurantCartModal: React.FC<IRestaurantCart> = ({ userInfo, setModal, ca
     const [itemDetail, showDetail] = React.useState(-1);
     const [selectedAddress, setAddress] = React.useState(userInfo.address[userInfo.selectedAddress]);
     const [manageAddress, setAnotherAddress] = React.useState(false);
+    const [inputAddress, setInputAddress] = React.useState('');
     const [payToggle, setPay] = React.useState(false);
     const [paymode, selectPayment] = React.useState(-1);
-    const [inputAddress, setInputAddress] = React.useState('');
+    const [paymentSelected, selectPaymentMode] = React.useState('');
+    const [orderLevel, setOrder] = React.useState(0);
     const restRef = restaurantInfo[selected];
     const list = [...cartList];
+
+    useEffect(() => {
+        BackHandler.addEventListener('hardwareBackPress', () => setModal(-1));
+        return () => {
+            BackHandler.addEventListener('hardwareBackPress', () => setModal(-1));
+        }
+    }, [setModal])
+
     if (list.length <= 0) setModal(-1);
     let totalPrice = 0;
     for (let item in cartList) {
@@ -49,160 +58,271 @@ const RestaurantCartModal: React.FC<IRestaurantCart> = ({ userInfo, setModal, ca
     }
     return (
         <View style={{
-            width: '90%', alignContent: 'center'
+            alignContent: 'center', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'
         }}>
-            <View>
-                <Text style={{ color: '#eee', textAlign: 'center', fontWeight: '800', fontSize: 16, margin: 4 }}>
-                    Your Order
+            <ScrollView>
+                <View>
+                    <Text style={{ color: '#eee', textAlign: 'center', fontWeight: '800', fontSize: 16, margin: 4 }}>
+                        Your Order
             </Text>
-            </View>
-            <View style={{ width: '100%' }}>
-                <View style={{ alignContent: 'center', alignItems: 'center' }}>
-                    <Image source={require(`../imgs/png/food/${restRef.image}.png`)}
-                        style={{ width: 100, height: 100, borderRadius: 50, margin: 8 }} />
-                    <Text style={{ color: '#eee', textAlign: 'center' }}>
-                        {restRef.name}
-                    </Text>
-                    <Text style={{ color: '#eee', textAlign: 'center' }}>
-                        <Emoji emoji="⭐" label="rating star" /> {restRef.rating.toFixed(1)}
-                    </Text>
+                </View>
+                {!payToggle ?
+                    <>
+                        <View style={{ maxWidth: 500, minWidth: 280 }}>
+                            <View style={{ alignContent: 'center', alignItems: 'center' }}>
+                                <Image source={require(`../imgs/png/food/${restRef.image}.png`)}
+                                    style={{ width: 100, height: 100, borderRadius: 50, margin: 8 }} />
+                                <Text style={styles.baseModalText}>
+                                    {restRef.name}
+                                </Text>
+                                <Text style={styles.baseModalText}>
+                                    <Emoji emoji="⭐" label="rating star" /> {restRef.rating.toFixed(1)}
+                                </Text>
 
-                    <Text style={{ color: '#eee', textAlign: 'center' }}>
-                        (xx)-xxxx-xxxx
-                    </Text>
-                    <Text style={{ color: '#eee', textAlign: 'center' }}>
+                                <Text style={styles.baseModalText}>
+                                    (xx)-xxxx-xxxx
+                            </Text>
+                            </View>
+                        </View>
+                    </>
+                    : ''}
+                <View>
+                    <Text style={styles.baseModalText}>
                         Delivery time: {restRef.time} minutes
-                    </Text>
-
+                            </Text>
                 </View>
                 <View style={styles.itemRowContainer}>
-                    <Text style={{ color: '#eee' }}>
+                    <Text style={styles.baseModalText}>
                         item
-                        </Text>
-                    <Text style={{ color: '#eee' }}>
+                            </Text>
+                    <Text style={styles.baseModalText}>
                         unit price
-                        </Text>
-                    <Text style={{ color: '#eee' }}>
+                            </Text>
+                    <Text style={styles.baseModalText}>
                         quantity
-                        </Text>
-                    <Text style={{ color: '#eee' }}>
+                            </Text>
+                    <Text style={styles.baseModalText}>
                         delete
-                        </Text>
+                            </Text>
                 </View>
                 {
                     list.map((item: any, index: number) => <View>
                         <View
                             style={styles.itemRowContainer}>
-                            <Text style={{ color: '#eee' }}>
+                            <Text style={styles.baseModalText}>
                                 {item.name}
                             </Text>
-                            <TouchableHighlight onPress={() => showDetail(index)}>
-                                <Text style={index !== itemDetail ? styles.touchablePrice : [styles.touchablePrice, styles.activeDetailTouchable]}>
-                                    ${item.price}
-                                </Text>
-                            </TouchableHighlight>
-                            <Text style={{ color: '#eee' }}>
+                            <View>
+                                <TouchableHighlight onPress={() => showDetail(index)}>
+                                    <Text style={index !== itemDetail ? styles.touchablePrice : [styles.touchablePrice, styles.activeDetailTouchable]}>
+                                        ${item.price}
+                                    </Text>
+                                </TouchableHighlight>
+                            </View>
+                            <Text style={styles.baseModalText}>
                                 {item.units}
                             </Text>
                             <Button title="X" color="crimson" onPress={() => removeItem(index)} />
                         </View>
-                        {itemDetail === index ? <View style={{ flexWrap: 'wrap', flexDirection: 'row' }}>
+                        {itemDetail === index ? <View style={{
+                            flexWrap: 'wrap', flexDirection: 'row',
+                            maxWidth: '90%', margin: 4, justifyContent: 'center'
+                        }}>
                             {item.opts.map((array: [string, number], i: number) => i !== 0 ? (<View style={{
-                                flexDirection: 'row', margin: 3, justifyContent: 'space-evenly', marginTop: 0,
-                                opacity: 0.7
+                                margin: 3, opacity: 0.7
                             }}>
-                                <Text style={{ color: '#ddd' }}>{array[0]}</Text>
-                                <Text style={{ color: '#ddd', marginHorizontal: 4 }}>${array[1]}</Text>
-                                <Text style={{ color: '#ddd' }}>quantity: {item.numberOpts[i]}</Text>
+                                <Text style={styles.baseModalText}>
+                                    {item.numberOpts[i]} {array[0]} for ${array[1] * item.numberOpts[i]}
+                                </Text>
+
                             </View>) : '')}
                         </View> : ''}
                     </View>)
                 }
-            </View>
-            <View style={styles.priceContainer}>
-                <Text style={{ color: '#eee' }}>
-                    subtotal price: ${totalPrice.toFixed(2)}
-                </Text>
-                <Text style={{ color: restRef.deliveryFee === 0 ? 'limegreen' : 'crimson' }}>
-                    {restRef.deliveryFee === 0 ? 'FREE DELIVERY' : `+ $${(restRef.deliveryFee).toFixed(2)} delivery fee`}
-                </Text>
-                <Text style={{ color: '#eee' }}>
-                    Total: ${(totalPrice + restRef.deliveryFee).toFixed(2)}
-                </Text>
-
-            </View>
-            <View style={styles.buttonContainer}>
-                <Button title="checkout" color={payToggle ? 'dimgray' : 'crimson'} onPress={() => setPay(!payToggle)} />
-                <Button title="go back" color="royalblue" onPress={() => setModal(-1)} />
-            </View>
-            {
-                payToggle ? <View>
-                    <Text style={{color: '#eee', fontSize: 16 }}>
-                        PLease, select a payment:
+                <View style={styles.priceContainer}>
+                    <Text style={styles.baseModalText}>
+                        subtotal price: ${totalPrice.toFixed(2)}
                     </Text>
-                    <View style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-evenly',
-                    }}>
-                        <TouchableHighlight onPress={() => selectPayment(0)}>
-                            <Text style={{ color: '#eee', padding: 8, borderRadius: 5, backgroundColor: paymode === 0 ? 'royalblue' :'dimgrey' }}>
-                                <Emoji emoji="💳" label="card" /> My card XXXX
-                            </Text>
-                        </TouchableHighlight>
-                        <TouchableHighlight onPress={() => selectPayment(1)}>
-                            <Text style={{ color: '#eee', padding: 8, borderRadius: 5, backgroundColor: paymode === 1 ? 'royalblue' :'dimgrey'  }}>
-                                <Emoji emoji="💵" label="cash" /> Cash
-                            </Text>
-                        </TouchableHighlight>
-                    </View>
-                    <View>
-                        <TouchableHighlight onPress={() => setAnotherAddress(!manageAddress)}>
-                            <Text style={{ color: '#eee' }}>
-                                deliver to: {selectedAddress}
-                            </Text>
-                        </TouchableHighlight>
-                        {
-                            manageAddress ? <View>
-                                <Text style={{ color: '#eee' }}>
-                                    Click to select an address
-                                </Text>
-                                {userInfo.address.map((e: string) => <TouchableHighlight onPress={() => {
-                                    setAnotherAddress(false);
-                                    setAddress(e);
-                                }}>
-                                    <Text style={{ color: '#eee' }}>
-                                        {e}
+                    <Text style={{ color: restRef.deliveryFee === 0 ? 'limegreen' : 'crimson', textAlign: 'center' }}>
+                        {restRef.deliveryFee === 0 ? 'FREE DELIVERY' : `+ $${(restRef.deliveryFee).toFixed(2)} delivery fee`}
+                    </Text>
+                    <Text style={styles.baseModalText}>
+                        Total: ${(totalPrice + restRef.deliveryFee).toFixed(2)}
+                    </Text>
+                </View>
+                <View style={styles.buttonContainer}>
+                    <Button title="checkout" color={payToggle ? 'royalblue' : 'dimgray'} onPress={() => setPay(!payToggle)} />
+                    <Button title="go back" color="crimson" onPress={() => setModal(-1)} />
+                </View>
+
+                {
+                    payToggle ?
+                        <View>
+                            {
+                                [<View style={{ margin: 8 }}>
+                                    {
+                                        !manageAddress ?
+                                            <View>
+                                                <Text style={[styles.baseModalText, styles.textTitleMargin]}>
+                                                    Deliver to:
+                                            </Text>
+                                                <TouchableHighlight onPress={() => setAnotherAddress(!manageAddress)} style={styles.customButton}>
+                                                    <Text style={styles.customButtonText}>
+                                                        {selectedAddress}
+                                                    </Text>
+
+                                                </TouchableHighlight>
+                                            </View>
+                                            :
+                                            <View>
+                                                <Text style={[styles.baseModalText, styles.textTitleMargin]}>
+                                                    Click any below to select an address:
+                                            </Text>
+                                                {userInfo.address.map((e: string) => <TouchableHighlight style={styles.customButton}
+                                                    onPress={() => {
+                                                        setAnotherAddress(false);
+                                                        setAddress(e);
+                                                    }}>
+                                                    <Text style={styles.customButtonText}>
+                                                        {e}
+                                                    </Text>
+
+                                                </TouchableHighlight>
+
+                                                )}
+                                                <Text style={[styles.baseModalText, styles.textTitleMargin]}>
+                                                    You can also type a new address:
+                                            </Text>
+                                                <TextInput style={styles.textInput} onChangeText={setInputAddress} value={inputAddress} />
+                                                <TouchableHighlight style={styles.customButton}>
+                                                    <Text style={styles.customButtonText}>
+                                                        Select
+                                                    </Text>
+                                                </TouchableHighlight> 
+                                            </View>}
+                                    <View>
+                                        <Text style={{ color: '#eee', fontSize: 16 }}>
+                                            Select a payment method:
                                     </Text>
-                                </TouchableHighlight>)}
-                                <Text style={{ color: '#eee' }}>
-                                    Or type a new address:
+                                        <View style={{
+                                            flexDirection: 'row',
+                                            justifyContent: 'space-evenly',
+                                            width: '70vw',
+                                            margin: 8
+                                        }}>
+                                            <TouchableHighlight onPress={() => {
+                                                selectPayment(0);
+                                                selectPaymentMode('');
+                                            }}>
+                                                <Text style={{ color: '#eee', padding: 8, borderRadius: 5, backgroundColor: paymode === 0 ? 'royalblue' : 'dimgrey' }}>
+                                                    online payment
+                                    </Text>
+                                            </TouchableHighlight>
+                                            <TouchableHighlight onPress={() => {
+                                                selectPayment(1);
+                                                selectPaymentMode('');
+                                            }}>
+                                                <Text style={{ color: '#eee', padding: 8, borderRadius: 5, backgroundColor: paymode === 1 ? 'royalblue' : 'dimgrey' }}>
+                                                    pay on delivery
                                 </Text>
-                                <TextInput style={{
-                                    backgroundColor: '#eee',
-                                    color: '#333'
-                                }} onChangeText={setInputAddress} value={inputAddress} />
-                                <Button title="select" color='royalblue' onPress={() => setAddress(inputAddress)} />
-                            </View> : ''
-                        }
-                    </View>
-                </View> : ''
-            }
-            {
-                paymode !== -1 ? 
-                <View>
-                    <Button title="aaa" color="crimson" onPress={() => console.log('do the magic and gimme the food')} />
-                </View> 
-                : ''
-            }
+                                            </TouchableHighlight>
+                                        </View>
+                                        <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-evenly' }}>
+                                            {
+                                                paymode === 0 ? <TouchableHighlight onPress={() => {
+                                                    selectPaymentMode('credit card');
+                                                    // setOrder(orderLevel + 1);
+                                                }}>
+                                                    <Text style={paymentSelected === 'credit card' && paymode === 0 ? [styles.customButton, styles.selectedPayment] : [styles.customButton, styles.unselectedPayment]}>
+                                                        <Emoji emoji="💳" label="cardpay" /> my credit card (99XX)
+                                    </Text>
+                                                </TouchableHighlight> : paymode === 1 ?
+                                                        <>
+                                                            <TouchableHighlight style={paymentSelected === 'credit card' && paymode === 1 ? [styles.customButton, styles.selectedPayment] : [styles.customButton, styles.unselectedPayment]}
+                                                                onPress={() => {
+                                                                    selectPaymentMode('credit card');
+                                                                }}>
+                                                                <Text style={styles.baseModalText}>
+                                                                    <Emoji emoji="💳" label="cardpay" /> Credit card
+                                            </Text>
+                                                            </TouchableHighlight>
+                                                            <TouchableHighlight style={paymentSelected === 'cash' && paymode === 1 ? [styles.customButton, styles.selectedPayment] : [styles.customButton, styles.unselectedPayment]}
+                                                                onPress={() => {
+                                                                    selectPaymentMode('cash');
+                                                                }}>
+                                                                <Text style={styles.baseModalText}>
+                                                                    <Emoji emoji="💵" label="cashpay" /> Cash
+                                            </Text>
+                                                            </TouchableHighlight>
+                                                            <TouchableHighlight style={paymentSelected === 'debit card' && paymode === 1 ? [styles.customButton, styles.selectedPayment] : [styles.customButton, styles.unselectedPayment]}
+                                                                onPress={() => {
+                                                                    selectPaymentMode('debit card');
+                                                                }}>
+                                                                <Text style={styles.baseModalText}>
+                                                                    <Emoji emoji="💳" label="debitpay" /> Debit card
+                                            </Text>
+                                                            </TouchableHighlight>
+                                                        </> : ''
+                                            }
+                                        </View>
+                                        {paymentSelected.length > 0 ? <TouchableHighlight
+                                            onPress={() => setOrder(orderLevel + 1)}
+                                            style={styles.customButton}>
+                                            <Text style={styles.customButtonText}>
+                                                Checkout
+                                            </Text>
+                                        </TouchableHighlight> : ''}
+                                    </View>
+                                </View>,
+                                <View>
+                                    <Text style={styles.baseModalText}>
+                                        Please, review your order.
+                                </Text>
+                                    <TouchableHighlight onPress={() => setOrder(orderLevel - 1)}>
+                                        <>
+                                        <Text style={styles.baseModalText}>
+                                            Deliver to the address: {selectedAddress}
+                                        </Text>
+                                        <Text style={styles.baseModalText}>
+                                            {paymode === 0 ? 'pay online' : 'pay on delivery'} with {paymentSelected}
+                                        </Text>
+                                        </>
+                                    </TouchableHighlight>
+                                    <Text style={styles.baseModalText}>
+                                        You will be charged with ${(totalPrice + restRef.deliveryFee).toFixed(2)}
+                                    </Text>
+                                    <Text style={styles.baseModalText}>
+                                            If there is no problem with your order, confirm below:
+                                    </Text>
+                                    <TouchableHighlight style={[styles.customButton, {backgroundColor: 'rebeccapurple'}]}>
+                                        <Text style={styles.customButtonText}>
+                                            Give me the food!
+                                        </Text>
+                                    </TouchableHighlight>
+                                    <TouchableHighlight style={[styles.customButton, {backgroundColor: 'crimson'}]}>
+                                        <Text style={styles.customButtonText}>
+                                            I want to go back...
+                                        </Text>
+                                    </TouchableHighlight>
+
+                                </View>
+                                ][orderLevel]
+                            }</View> : ''
+                }
+            </ScrollView>
         </View>
     )
 }
 
 const styles = StyleSheet.create({
+    priceTitle: {
+        fontSize: 16,
+        fontWeight: '600',
+    },
     itemRowContainer: {
         flexDirection: 'row',
         margin: 2,
-        width: '100%',
+        width: '80vw',
         justifyContent: 'space-between',
         alignContent: 'center',
         alignItems: 'center'
@@ -213,6 +333,31 @@ const styles = StyleSheet.create({
         backgroundColor: 'royalblue',
         padding: 4,
         borderRadius: 4
+    },
+    textTitleMargin: {
+        margin: 8,
+        fontWeight: '600',
+    },
+    customButton: {
+        margin: 8,
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        backgroundColor: 'royalblue',
+        alignItems: 'center',
+        borderRadius: 8,
+    },
+    customButtonText: {
+        color: 'white',
+        textTransform: 'uppercase',
+        fontSize: 16,
+        fontWeight: '500',
+        textAlign: 'justify'
+    },
+    selectedPayment: {
+        backgroundColor: 'goldenrod',
+    },
+    unselectedPayment: {
+        backgroundColor: 'dimgray'
     },
     activeDetailTouchable: {
         backgroundColor: 'firebrick'
@@ -225,6 +370,15 @@ const styles = StyleSheet.create({
     priceContainer: {
         margin: 4,
         padding: 2
+    },
+    baseModalText: {
+        color: '#eee',
+        textAlign: 'center'
+    },
+    textInput: {
+        backgroundColor: '#eee',
+        borderRadius: 5,
+        margin: 4,
     }
 })
 
