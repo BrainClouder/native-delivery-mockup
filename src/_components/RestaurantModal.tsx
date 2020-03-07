@@ -219,7 +219,7 @@ const RestaurantModal: React.FC<IRestaurantModal> = ({ restFeed, selectItem, Lin
                         <View style={{ position: 'absolute', top: '1%', width: '100%', left: 0, alignItems: 'center', zIndex: 5 }}>
                             <View style={{
                                 borderRadius: 8,
-                                flexDirection: 'column', backgroundColor: '#222',
+                                flexDirection: 'column', backgroundColor: '#eee',
                                 alignItems: 'center', width: '95%', margin: 8
                             }}>
                                 {modalList[modalMode]}

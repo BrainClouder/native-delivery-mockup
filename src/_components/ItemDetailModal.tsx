@@ -90,30 +90,26 @@ const ItemDetailModal: React.FC<IitemModal> = ({ itemSelected, addToCart, setMod
                             flexDirection: 'row', justifyContent: 'space-between',
                             alignContent: 'center',
                         }}>
-                            <View style={{ flexDirection: 'row', alignContent: 'center', alignItems: 'center' }}>
-                                {optItem.indexOf(opt) !== -1 || optItem.indexOf(opt) > 0  ? <TouchableHighlight style={{ margin: 2 }}
-                                    onPress={() => handlerRemoveOpt(opt)}>
-                                    <Text style={{ color: '#eee', fontSize: 22 }}>
-                                        -
-                                </Text>
-                                </TouchableHighlight>
-                                    : <Text style={{opacity: 0}}>-</Text>}
+                            <TouchableHighlight
+                                onPress={() => optItem.indexOf(opt) === -1 ? handlerAddOpt(opt) : handlerRemoveOpt(opt)}>
+                                <View style={{
+                                    flexDirection: 'row', alignContent: 'center', alignItems: 'center'
+                                }}>
+                                    <View style={{
+                                        backgroundColor: optItem.indexOf(opt) !== -1 ? 'crimson' : 'dimgray',
+                                        borderColor: '#444',
+                                        borderWidth: 2,
+                                        borderRadius: 50,
+                                        height: 20,
+                                        width: 20
+                                    }}>
 
-                                <Text style={styles.baseModalText}>
-                                    {optItem.indexOf(opt) !== -1 ? optCount[optItem.indexOf(opt)] : 0}
-                                </Text>
-                                <TouchableHighlight style={{ justifyContent: 'center', margin: 2 }} onPress={() => handlerAddOpt(opt)}>
+                                    </View>
                                     <Text style={styles.baseModalText}>
-                                        +
-                                </Text>
-                                </TouchableHighlight>
-                            </View>
-                            <Text style={styles.baseModalText}>
-                                {opt[0]}
-                            </Text>
-                            <Text style={styles.baseModalText}>
-                                ${opt[1]}
-                            </Text>
+                                        {opt[0]} for ${opt[1]}
+                                    </Text>
+                                </View>
+                            </TouchableHighlight>
                         </View>)}
                 </View>
 
@@ -160,13 +156,13 @@ const ItemDetailModal: React.FC<IitemModal> = ({ itemSelected, addToCart, setMod
 
 const styles = StyleSheet.create({
     baseModalText: {
-        color: '#eee',
+        color: '#333',
         textAlign: 'center',
         margin: 2,
         fontSize: 14
     },
     modalTitle: {
-        color: '#333',
+        color: '#eee',
         textAlign: 'center',
     },
     listContainer: {
@@ -175,7 +171,7 @@ const styles = StyleSheet.create({
         margin: 4,
     },
     titleContainer: {
-        backgroundColor: '#ddd',
+        backgroundColor: '#black',
         width: '100%',
         borderTopLeftRadius: 8,
         borderTopRightRadius: 8
@@ -192,7 +188,7 @@ const styles = StyleSheet.create({
         padding: 8
     },
     textInputRoot: {
-        backgroundColor: '#eee'
+        backgroundColor: '#fff'
     },
     itemNameContainer: {
         flexDirection: 'row',
