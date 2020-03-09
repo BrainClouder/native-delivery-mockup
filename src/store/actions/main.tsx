@@ -38,6 +38,16 @@ export type TmainState = {
     image: string,
     deliveries: number
   },
+  activeOrder: {
+    checkout: boolean,
+    retaurantConfirmed: boolean,
+    number: number,
+    items: [] | TcartList,
+    restaurantName: string,
+    restaurantTime: string,
+    restaurantRating: string,
+    restaurantImage: number,    
+  },
 }
 
 export type TcartList = {
@@ -45,7 +55,7 @@ export type TcartList = {
   desc: string,
   price: number,
   units: number,
-  opts: [string, number][],
+  opts: [string, number][] | [],
   numberOpts: number[],
   comment: string,
 }[];

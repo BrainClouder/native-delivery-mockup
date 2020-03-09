@@ -79,7 +79,17 @@ const initialState: TmainState = {
         address: ['Loram apsum tower II, 77, Mars', 'Dinum bog resort, 42, Mars'],
         image: 'https://i.stack.imgur.com/qrzo6.png?s=328&g=1',
         deliveries: 35    
-      }
+      },
+    activeOrder: {
+        checkout: false,
+        retaurantConfirmed: false,
+        number: -1,
+        items: [],
+        restaurantName: '',
+        restaurantTime: '',
+        restaurantRating: '',
+        restaurantImage: -1,    
+    },
 }
 
 const main = (state = initialState, action: any) => {

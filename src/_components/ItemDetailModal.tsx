@@ -20,37 +20,23 @@ const ItemDetailModal: React.FC<IitemModal> = ({ itemSelected, addToCart, setMod
         }
         return optArray;
     });
-    const [optItem, setOpt] = React.useState([['', 0]]);
-    const [optCount, setOptCount] = React.useState([0]);
+    const [optItem, setOpt]: [any, any] = React.useState([]);
+    // const [optCount, setOptCount]: [number[], any] = React.useState([]);
     const [totalPrice, setTotal] = React.useState(itemSelected.prices[0]);
     const [observation, setObservation] = React.useState('');
     const [quantity, setQuantity] = React.useState(1);
 
     const handlerAddOpt = (opt: any) => {
         const a = [...optItem];
-        let b = [...optCount];
-        if (a.indexOf(opt) === -1) {
-            a.push(opt);
-            b.push(1);
-            setOpt(a);
-            setOptCount(b);
-        } else {
-            b[a.indexOf(opt)]++;
-            setOptCount(b);
-        }
+        a.push(opt);
+        setOpt(a);
         setTotal(totalPrice + opt[1])
     }
 
     const handlerRemoveOpt = (opt: any) => {
         const a = [...optItem];
-        let b = [...optCount];
-        b[a.indexOf(opt)]--;
-        if (b[a.indexOf(opt)] <= 0) {
-            a.splice(a.indexOf(opt), 1);
-            b.splice(a.indexOf(opt), 1);
-            setOpt(a);
-        }
-        setOptCount(b);
+        a.splice(a.indexOf(opt), 1);
+        setOpt(a);
         setTotal(totalPrice - opt[1])
     }
     const handlerAddToCart = () => {
@@ -60,7 +46,6 @@ const ItemDetailModal: React.FC<IitemModal> = ({ itemSelected, addToCart, setMod
             price: totalPrice,
             units: quantity,
             opts: optItem,
-            numberOpts: optCount,
             comment: observation,
         });
         setModal(-1);
@@ -74,7 +59,7 @@ const ItemDetailModal: React.FC<IitemModal> = ({ itemSelected, addToCart, setMod
             <View style={styles.innerContainer}>
                 <View style={styles.itemNameContainer}>
                     <Text style={styles.baseModalText}>
-                        {itemSelected.name} for ${itemSelected.prices[0]}
+                        {itemSelected.name} for ${itemSelected.prices[0].toFixed(2)}
                     </Text>
                 </View>
                 <Text style={[styles.baseModalText, styles.description]}>
@@ -84,33 +69,28 @@ const ItemDetailModal: React.FC<IitemModal> = ({ itemSelected, addToCart, setMod
                     <Text style={styles.baseModalText}>
                         {optionsArray.length > 0 ? 'Addons:' : 'Sorry, no options :('}
                     </Text>
-
-                    {
-                        optionsArray.map((opt: [string, number]) => <View style={{
-                            flexDirection: 'row', justifyContent: 'space-between',
-                            alignContent: 'center',
-                        }}>
-                            <TouchableHighlight
+                    <View style={{ backgroundColor: '#dedede', alignSelf: 'center', borderRadius: 10, padding: 8 }}>
+                        {
+                            optionsArray.map((opt: [string, number]) => <TouchableHighlight
                                 onPress={() => optItem.indexOf(opt) === -1 ? handlerAddOpt(opt) : handlerRemoveOpt(opt)}>
                                 <View style={{
-                                    flexDirection: 'row', alignContent: 'center', alignItems: 'center'
+                                    flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', alignContent: 'center'
                                 }}>
                                     <View style={{
-                                        backgroundColor: optItem.indexOf(opt) !== -1 ? 'crimson' : 'dimgray',
-                                        borderColor: '#444',
+                                        backgroundColor: optItem.indexOf(opt) !== -1 ? 'royalblue' : 'white',
+                                        borderColor: optItem.indexOf(opt) !== -1 ? '#333' : '#666',
                                         borderWidth: 2,
                                         borderRadius: 50,
-                                        height: 20,
-                                        width: 20
+                                        height: 15,
+                                        width: 15,
                                     }}>
-
                                     </View>
-                                    <Text style={styles.baseModalText}>
-                                        {opt[0]} for ${opt[1]}
+                                    <Text style={[styles.baseModalText, { marginHorizontal: 8 }]}>
+                                        {opt[0]} for ${opt[1].toFixed(2)}
                                     </Text>
                                 </View>
-                            </TouchableHighlight>
-                        </View>)}
+                            </TouchableHighlight>)}
+                    </View>
                 </View>
 
                 <View>
@@ -121,33 +101,34 @@ const ItemDetailModal: React.FC<IitemModal> = ({ itemSelected, addToCart, setMod
                 </View>
                 <View style={{ flexDirection: 'column', alignContent: 'center', alignItems: 'center' }}>
                     <Text style={styles.baseModalText}>
-                        Unit price: ${itemSelected.prices[0]}
+                        Unit price: ${itemSelected.prices[0].toFixed(2)}
                     </Text>
                     <Text style={styles.baseModalText}>
-                        Total: ${totalPrice * quantity}.00
-                        </Text>
-                    <View style={{ flexDirection: 'row' }}>
+                        Total: ${(totalPrice * quantity).toFixed(2)}
+                    </Text>
+                    <View style={{}}>
                         <Text style={styles.baseModalText}>
                             Units:
                         </Text>
-                        <TouchableHighlight onPress={() => quantity <= 1 ? '' : setQuantity(quantity - 1)}>
-                            <Text style={styles.baseModalText}>
-                                -
+                        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                            <View style={{ alignItems: 'center', opacity: quantity > 1 ? 1 : 0.4 }}>
+                                <Button title="➖" color={quantity <= 1 ? 'dimgray' : 'royalblue'} onPress={() => quantity <= 1 ? '' : setQuantity(quantity - 1)} />
+                            </View>
+                            <Text style={[styles.baseModalText, { margin: 32, fontSize: 20 }]}>
+                                {quantity}
                             </Text>
-                        </TouchableHighlight>
-                        <Text style={styles.baseModalText}>
-                            {quantity}
-                        </Text>
-                        <TouchableHighlight onPress={() => setQuantity(quantity + 1)}>
-                            <Text style={styles.baseModalText}>
-                                +
-                            </Text>
-                        </TouchableHighlight>
+                            <View style={{ alignItems: 'center' }}>
+                                <Button title="➕" color="royalblue" onPress={() => setQuantity(quantity + 1)} />
+                            </View>
+                        </View>
 
                     </View>
                 </View>
-
-                <Button title="Add to cart" onPress={handlerAddToCart} color="crimson" />
+                <View style={{
+                    alignItems: 'center'
+                }}>
+                    <Button title="Add to cart" onPress={handlerAddToCart} color="crimson" />
+                </View>
             </View>
 
         </View>
@@ -166,7 +147,6 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     listContainer: {
-        width: '80vw',
         alignItems: 'stretch',
         margin: 4,
     },
