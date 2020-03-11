@@ -51,14 +51,6 @@ const AppBar: React.FC<IAppBar> = ({ showMode, toggleShow, Link, userInfo, updat
 
   return (<>
     {/* <View style={{
-      position: 'absolute', flexDirection: 'column', backgroundColor: '#111',
-      top: 0, right: 0, width: window.innerWidth < 500 ? 50 : 100, zIndex: 5
-    }}>
-      <Text>
-        aaaa
-      </Text>
-    </View> */}
-    <View style={{
       position: 'absolute', zIndex: 5, top: 0, right: 5, backgroundColor: '#111', padding: 4, borderRadius: 20
     }}>
       <TouchableHighlight onPress={() => Linking.openURL('https://github.com/BrainClouder/native-delivery-mockup')}>
@@ -66,11 +58,71 @@ const AppBar: React.FC<IAppBar> = ({ showMode, toggleShow, Link, userInfo, updat
           <Image source={{ uri: GitHubLight }} style={{ width: 32, height: 32 }} />
         </View>
       </TouchableHighlight>
-    </View>
-
-
+    </View> */}
 
     <View style={{
+      position: 'absolute',
+      alignItems: 'center',
+      width: '100%',
+      zIndex: 5,
+      flexDirection: 'row',
+      justifyContent: 'space-evenly'
+    }}>      
+      <View style={{
+        justifyContent: 'center', backgroundColor: '#111', borderRadius: 50,
+      }}>
+        <TouchableHighlight onPress={() => setModal(0)}>
+          <Image style={[{ width: 40, height: 40 }, styles.avatarImage]}
+            source={{ uri: userInfo.image }} />
+        </TouchableHighlight>
+      </View>
+
+      <View style={{
+        borderRadius: 50,
+        backgroundColor: "#dedede",
+        alignItems: 'center'
+      }}>
+        <Button title="🔔" onPress={() => console.log('open notifications')} color="transparent"
+        />
+      </View>
+
+      
+      <View style={{
+        backgroundColor: '#111', padding: 4, borderRadius: 20
+      }}>
+        <TouchableHighlight onPress={() => Linking.openURL('https://github.com/BrainClouder/native-delivery-mockup')}>
+          <View>
+            <Image source={{ uri: GitHubLight }} style={{ width: 32, height: 32 }} />
+          </View>
+        </TouchableHighlight>
+      </View>
+
+    </View>
+
+    <View style={{
+      position: 'absolute', alignItems: 'center', zIndex: 5,
+      bottom: 0, right: 20,
+        backgroundColor: '#111', borderTopLeftRadius: 10,
+        borderTopRightRadius: 10, flexDirection: 'row', padding: 12
+      }}>
+        <TouchableHighlight onPress={() => setAButton(!addressButton)}>
+          <View style={{ alignItems: 'center' }}>
+            <Text style={{ fontSize: 18 }}>
+              <Emoji emoji="🛵" label="address" />
+            </Text>
+          </View>
+        </TouchableHighlight>
+        <View>
+          {addressButton ? <TouchableHighlight onPress={() => setModal(1)}>
+            <Text style={styles.addressBarText}>
+              {userInfo.address[userInfo.selectedAddress]}
+            </Text>
+          </TouchableHighlight> : ''}
+        </View>
+        
+      </View>
+
+    {/* <View style={{
       position: 'absolute', zIndex: 5, top: 0, left: 5,
       justifyContent: 'center', backgroundColor: '#111', borderBottomLeftRadius: 50,
       borderBottomRightRadius: 50
@@ -79,10 +131,20 @@ const AppBar: React.FC<IAppBar> = ({ showMode, toggleShow, Link, userInfo, updat
         <Image style={[{ width: 40, height: 40 }, styles.avatarImage]}
           source={{ uri: userInfo.image }} />
       </TouchableHighlight>
-    </View>
+    </View> */}
+    {/* 
+    <View style={{
+      position: 'absolute', 
+      left: 90, zIndex: 5,
+      borderRadius: 50,
+      backgroundColor: "#dedede"
+    }}>
+      <Button title="🔔" onPress={() => console.log('open notifications')} color="transparent"
+      />
+    </View> */}
 
     <View style={{
-      position: 'absolute', top: 60, left: 6, zIndex: 5
+      position: 'absolute', top: 60, left: 6, zIndex: 5, alignItems: 'center'
     }}>
       <TouchableHighlight onPress={() => toggleShow(!showMode)} style={{
         borderColor: '#222', borderWidth: 4,
@@ -95,7 +157,7 @@ const AppBar: React.FC<IAppBar> = ({ showMode, toggleShow, Link, userInfo, updat
       </TouchableHighlight>
     </View>
 
-    <View style={{
+    {/* <View style={{
       position: 'absolute', zIndex: 5, top: 0, right: 50, maxHeight: 75,
       backgroundColor: '#111', borderBottomLeftRadius: 10,
       borderBottomRightRadius: 10, flexDirection: 'row', padding: 12
@@ -114,7 +176,7 @@ const AppBar: React.FC<IAppBar> = ({ showMode, toggleShow, Link, userInfo, updat
           </Text>
         </TouchableHighlight> : ''}
       </View>
-    </View>
+    </View> */}
     {modalList[modalState] !== undefined ? <>
       <TouchableHighlight onPress={() => setModal(-1)} style={{ backgroundColor: '#222', zIndex: 5, position: 'absolute', width: '100%', height: '100%', top: 0, left: 0, opacity: 0.6 }}>
         <View></View>
@@ -190,7 +252,7 @@ const mapStateToProps = (state: TmainState) => {
 const mapDispatchToProps = (dispatch: any) => {
   return {
     toggleShow: (e: boolean) => dispatch({ type: ACTIONS.toggleShow, payload: e }),
-    updateUser: (e: any) => dispatch({type: ACTIONS.updateUser, payload: e})
+    updateUser: (e: any) => dispatch({ type: ACTIONS.updateUser, payload: e })
   }
 }
 

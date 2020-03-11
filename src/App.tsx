@@ -53,7 +53,6 @@ const App: React.FC<IApp> = ({ Link }) => {
     sliderBody.push(<SlideShowCase Link={Link} key={i + 'slider'} filterType={i} />)
   }
   return (<>
-    {/* <AppBar /> */}
     <View style={{ backgroundColor: '#eee' }}>
       <AppBar Link={Link} />
       <ScrollView style={{ height: '100vh', width: '100vw' }}>

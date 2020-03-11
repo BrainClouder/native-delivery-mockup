@@ -43,7 +43,10 @@ const createRestFeed = () => {
         const Rimage: number = imageList[randomImageNumber][0];
         const RimageAttribution: string = imageList[randomImageNumber][1];
         const RdeliveryFee: number = Math.random() > 0.8 ? 0 : Math.floor(Math.random() * 8) + 2;
-        const Rpromo: boolean = Math.random() < 0.1;        
+        const Rpromo: boolean = Math.random() < 0.1;
+        const RcreditCard: boolean = Math.random() > 0.6;
+        const RdebitCard: boolean = Math.random() > 0.3;
+        const Rcash: boolean = Math.random() > 0.2;
         const timeToDeliver = ['20-40', '25-45', '30-60', '40-60', '40-90', '60-90', '60-120'][Math.floor(Math.random() * 7)];
         const RisOpen: boolean = todayHour < 13 && 7 < todayHour ? Math.random() < 0.2 : todayHour >= 13 && 17 > todayHour ? Math.random() < 0.4 : todayHour >= 17 || todayHour < 0 ? Math.random() < 0.8 : Math.random() < 0.52;
         ofTheKing.push({
@@ -55,7 +58,13 @@ const createRestFeed = () => {
           deliveryFee: RdeliveryFee,
           promo: Rpromo,
           isOpen: RisOpen,
-          time: timeToDeliver
+          time: timeToDeliver,
+          deliveryPay: RcreditCard || Rcash || RdebitCard,
+          deliveryInfo: {
+            credit: RcreditCard,
+            cash: Rcash,
+            debit: RdebitCard
+          }
         })
     }
     return ofTheKing;   
@@ -78,22 +87,29 @@ const initialState: TmainState = {
         selectedAddress: 0,
         address: ['Loram apsum tower II, 77, Mars', 'Dinum bog resort, 42, Mars'],
         image: 'https://i.stack.imgur.com/qrzo6.png?s=328&g=1',
-        deliveries: 35    
+        deliveries: 35,
+        onlineCard: ['MarsCard 1XXX', 'Nuxpress 2XXX']
       },
     activeOrder: {
+        paymentCategory: '',
+        paymentMethod: '',
+        totalPrice: '',
+        restaurantIndex: -1,
+        address: '',
+        number: -1,
+        items: [], 
         checkout: false,
         retaurantConfirmed: false,
-        number: -1,
-        items: [],
-        restaurantName: '',
-        restaurantTime: '',
-        restaurantRating: '',
-        restaurantImage: -1,    
     },
 }
 
 const main = (state = initialState, action: any) => {
     switch (action.type) {
+        case ACTIONS.setCheckoutCart: 
+            return {
+                ...state,
+                activeOrder: action.payload,
+            }
         case ACTIONS.changeSelectedItem:
             return {
                 ...state,
@@ -102,7 +118,7 @@ const main = (state = initialState, action: any) => {
         case ACTIONS.updateUser:
             return {
                 ...state,
-                userInfo:  action.payload
+                userInfo: action.payload
             }
 
         case ACTIONS.clearCart:

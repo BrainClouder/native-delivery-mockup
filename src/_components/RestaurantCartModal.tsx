@@ -5,6 +5,7 @@ import { TmainState, TcartList, ACTIONS } from '../store/actions/main';
 import Emoji from './util/Emoji';
 import BeforeCheckoutModal from './util/BeforeCheckoutModal';
 import CheckoutModal from './util/CheckoutModal';
+import AfterCheckoutModal from './util/AfterCheckoutModal';
 
 
 interface IRestaurantCart {
@@ -54,7 +55,7 @@ const RestaurantCartModal: React.FC<IRestaurantCart> = ({ userInfo, setModal, ca
         }
     }, [setModal]);
 
-    if(modalStage === -1) setModal(-1);
+    if (modalStage === -1) setModal(-1);
 
     if (itemList.length <= 0) setModal(-1);
     let totalPrice = 0;
@@ -62,10 +63,7 @@ const RestaurantCartModal: React.FC<IRestaurantCart> = ({ userInfo, setModal, ca
         const el = cartList[item];
         totalPrice = el.price * el.units + totalPrice;
     }
-    const cartModalList = [
-        <BeforeCheckoutModal Link={setModalStage} selected={selected}/>,
-        <CheckoutModal Link={setModalStage} />
-    ];
+
 
     return (
         <View>
@@ -76,7 +74,11 @@ const RestaurantCartModal: React.FC<IRestaurantCart> = ({ userInfo, setModal, ca
             </View>
             <ScrollView style={{ maxHeight: '95vh' }}>
                 {
-                    cartModalList[modalStage]
+                    [
+                    <BeforeCheckoutModal Link={setModalStage} selected={selected} />,
+                    <CheckoutModal Link={setModalStage} selected={selected}/>,
+                    <AfterCheckoutModal Link={setModalStage}/>
+                    ][modalStage]
                 }
                 {/* {!payToggle ?
                     <>

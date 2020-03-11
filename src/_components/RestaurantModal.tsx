@@ -162,14 +162,15 @@ const RestaurantModal: React.FC<IRestaurantModal> = ({ restFeed, selectItem, Lin
                                                     key={i + e.name}>
                                                     <View style={{
                                                         flexDirection: 'row', padding: 8, margin: '0.4em', opacity: restInfo.isOpen ? 1 : 0.4,
-                                                        backgroundColor: i % 2 === 0 ? '#efefef' : '#fefefe', borderRadius: 6
+                                                        backgroundColor: i % 2 === 0 ? '#efefef' : '#fefefe', borderRadius: 6,
+                                                        justifyContent: 'space-between'
                                                     }} accessibilityRole="menuitem">
-                                                        <View style={{ width: '80vw' }}>
+                                                        <View style={{width: '80vw'}}>
                                                             <Text style={{ fontWeight: '700', color: 'darkslategrey' }}>{e.name}</Text>
                                                             <Text style={{ fontWeight: '500', color: 'darkslategrey' }}>{e.desc}</Text>
                                                         </View>
-                                                        <View style={{ width: '12vw' }}>
-                                                            <Text >${e.prices[0]}</Text>
+                                                        <View style={{ alignItems: 'center' }}>
+                                                            <Text >${e.prices[0].toFixed(2)}</Text>
                                                         </View>
                                                     </View>
                                                 </TouchableHighlight> : '')}

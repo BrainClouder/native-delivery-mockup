@@ -5,6 +5,7 @@ const cartRemoveItem: string = 'CART-REMOVE-ITEM';
 const cartAdd: string = 'ADD-CART-ITEM';
 const updateUser: string = 'UPDATE-USER';
 const clearCart: string = 'CLEAR-CART';
+const setCheckoutCart: string = 'CHECK-CHECKOUT-CART';
 
 const changeSelectedItem: string = 'CHANGE-ITEM-SELECTED';
 
@@ -12,7 +13,7 @@ const changeSelectedItem: string = 'CHANGE-ITEM-SELECTED';
 
 export const ACTIONS = {
   selectRestaurant, refreshWidth, toggleShow, cartRemoveItem, cartAdd,
-  updateUser, changeSelectedItem, clearCart
+  updateUser, changeSelectedItem, clearCart, setCheckoutCart
 }
 
 export type TmainState = {
@@ -26,6 +27,12 @@ export type TmainState = {
     time: string,
     promo: boolean,
     isOpen: boolean,
+    deliveryPay: boolean,
+    deliveryInfo: {
+      credit: boolean,
+      cash: boolean,
+      debit: boolean
+    }
   }[],
   showMode: boolean,
   itemSelected: { name: string, desc: string, prices: number[] },
@@ -36,17 +43,19 @@ export type TmainState = {
     selectedAddress: number,
     address: string[],
     image: string,
-    deliveries: number
+    deliveries: number,
+    onlineCard: string [] | [],
   },
   activeOrder: {
     checkout: boolean,
     retaurantConfirmed: boolean,
     number: number,
     items: [] | TcartList,
-    restaurantName: string,
-    restaurantTime: string,
-    restaurantRating: string,
-    restaurantImage: number,    
+    restaurantIndex: number,  
+    paymentCategory: string,
+    paymentMethod: string,
+    totalPrice: string,
+    address: string,
   },
 }
 
